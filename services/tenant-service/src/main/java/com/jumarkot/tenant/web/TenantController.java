@@ -3,7 +3,6 @@ package com.jumarkot.tenant.web;
 import com.jumarkot.contracts.common.PageResponse;
 import com.jumarkot.contracts.tenant.TenantDto;
 import com.jumarkot.tenant.application.TenantService;
-import com.jumarkot.tenant.infrastructure.security.JwtAuthenticationFilter;
 import com.jumarkot.tenant.web.dto.CreateTenantRequest;
 import com.jumarkot.tenant.web.dto.UpdateTenantRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -78,12 +76,5 @@ public class TenantController {
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'SERVICE_ACCOUNT')")
     public ResponseEntity<TenantDto> suspendTenant(@PathVariable UUID id) {
         return ResponseEntity.ok(tenantService.suspendTenant(id));
-    }
-
-    private UUID extractTenantId(Authentication authentication) {
-        if (authentication.getPrincipal() instanceof JwtAuthenticationFilter.JwtPrincipal principal) {
-            return principal.tenantId();
-        }
-        throw new IllegalStateException("Cannot extract tenant from authentication");
     }
 }

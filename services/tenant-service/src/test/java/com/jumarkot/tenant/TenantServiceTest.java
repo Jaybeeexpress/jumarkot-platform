@@ -185,4 +185,66 @@ class TenantServiceTest {
         assertThat(result.getData().get(0).getSlug()).isEqualTo("corp-a");
         assertThat(result.getData().get(1).getStatus()).isEqualTo(TenantDto.TenantStatus.SUSPENDED);
     }
+
+    @Test
+    @DisplayName("mapStatus maps PENDING_SETUP to PENDING_VERIFICATION")
+    void mapStatus_pendingSetup_mapsToPendingVerification() {
+        UUID id = UUID.randomUUID();
+        Tenant tenant = buildTenantWithStatus(id, TenantStatus.PENDING_SETUP);
+        when(tenantRepository.findById(id)).thenReturn(Optional.of(tenant));
+
+        TenantDto result = tenantService.getTenant(id);
+
+        assertThat(result.getStatus()).isEqualTo(TenantDto.TenantStatus.PENDING_VERIFICATION);
+    }
+
+    @Test
+    @DisplayName("mapStatus maps ACTIVE to ACTIVE")
+    void mapStatus_active_mapsToActive() {
+        UUID id = UUID.randomUUID();
+        Tenant tenant = buildTenantWithStatus(id, TenantStatus.ACTIVE);
+        when(tenantRepository.findById(id)).thenReturn(Optional.of(tenant));
+
+        TenantDto result = tenantService.getTenant(id);
+
+        assertThat(result.getStatus()).isEqualTo(TenantDto.TenantStatus.ACTIVE);
+    }
+
+    @Test
+    @DisplayName("mapStatus maps SUSPENDED to SUSPENDED")
+    void mapStatus_suspended_mapsToSuspended() {
+        UUID id = UUID.randomUUID();
+        Tenant tenant = buildTenantWithStatus(id, TenantStatus.SUSPENDED);
+        when(tenantRepository.findById(id)).thenReturn(Optional.of(tenant));
+
+        TenantDto result = tenantService.getTenant(id);
+
+        assertThat(result.getStatus()).isEqualTo(TenantDto.TenantStatus.SUSPENDED);
+    }
+
+    @Test
+    @DisplayName("mapStatus maps DELETED to DEACTIVATED")
+    void mapStatus_deleted_mapsToDeactivated() {
+        UUID id = UUID.randomUUID();
+        Tenant tenant = buildTenantWithStatus(id, TenantStatus.DELETED);
+        when(tenantRepository.findById(id)).thenReturn(Optional.of(tenant));
+
+        TenantDto result = tenantService.getTenant(id);
+
+        assertThat(result.getStatus()).isEqualTo(TenantDto.TenantStatus.DEACTIVATED);
+    }
+
+    private Tenant buildTenantWithStatus(UUID id, TenantStatus status) {
+        return Tenant.builder()
+                .id(id)
+                .name("Test Corp")
+                .slug("test-corp")
+                .plan(TenantPlan.FREE)
+                .region("us-east-1")
+                .ownerId(UUID.randomUUID())
+                .status(status)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build();
+    }
 }
