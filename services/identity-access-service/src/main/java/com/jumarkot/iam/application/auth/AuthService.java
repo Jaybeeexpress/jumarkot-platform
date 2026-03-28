@@ -1,5 +1,6 @@
 package com.jumarkot.iam.application.auth;
 
+import com.jumarkot.iam.config.JwtConfig;
 import com.jumarkot.iam.domain.user.User;
 import com.jumarkot.iam.domain.user.UserRepository;
 import com.jumarkot.iam.domain.user.UserStatus;
@@ -22,6 +23,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
+    private final JwtConfig jwtConfig;
 
     public AuthResponse login(String email, String password, UUID tenantId) {
         User user = userRepository
@@ -44,7 +46,7 @@ public class AuthService {
         return AuthResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .expiresIn(900L)
+                .expiresIn(jwtConfig.getAccessTokenTtlSeconds())
                 .tokenType("Bearer")
                 .build();
     }
@@ -79,7 +81,7 @@ public class AuthService {
         return AuthResponse.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
-                .expiresIn(900L)
+                .expiresIn(jwtConfig.getAccessTokenTtlSeconds())
                 .tokenType("Bearer")
                 .build();
     }

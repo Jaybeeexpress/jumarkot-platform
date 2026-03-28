@@ -2,6 +2,7 @@ package com.jumarkot.iam.auth;
 
 import com.jumarkot.iam.application.auth.AuthService;
 import com.jumarkot.iam.application.auth.TokenService;
+import com.jumarkot.iam.config.JwtConfig;
 import com.jumarkot.iam.domain.user.User;
 import com.jumarkot.iam.domain.user.UserRepository;
 import com.jumarkot.iam.domain.user.UserRole;
@@ -38,6 +39,9 @@ class AuthServiceTest {
     @Mock
     private TokenService tokenService;
 
+    @Mock
+    private JwtConfig jwtConfig;
+
     private PasswordEncoder passwordEncoder;
     private AuthService authService;
 
@@ -49,7 +53,8 @@ class AuthServiceTest {
     @BeforeEach
     void setUp() {
         passwordEncoder = new BCryptPasswordEncoder(4); // Lower cost for tests
-        authService = new AuthService(userRepository, tokenService, passwordEncoder);
+        when(jwtConfig.getAccessTokenTtlSeconds()).thenReturn(900L);
+        authService = new AuthService(userRepository, tokenService, passwordEncoder, jwtConfig);
 
         activeUser = User.builder()
                 .id(userId)
