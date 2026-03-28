@@ -44,7 +44,7 @@ Jumarkot is an event-driven, microservices-based platform that provides real-tim
 
 | Service | Description | Database | Port |
 |---|---|---|---|
-| `iam-service` | Identity & Access Management – OAuth2/OIDC, JWT issuance, API key management | `jumarkot_iam` | 8080 |
+| `identity-access-service` | Identity & Access Management – JWT issuance (RS256), API key management, RBAC | `jumarkot_iam` | 8081 |
 | `tenant-service` | Multi-tenant account lifecycle, environment management, subscription | `jumarkot_tenants` | 8081 |
 | `event-ingestion-service` | High-throughput event intake, JSON Schema validation, deduplication, Kafka publish | `jumarkot_events` | 8082 |
 | `decision-engine-service` | Real-time risk scoring, ML model inference, decision persistence | `jumarkot_decisions` | 8083 |
@@ -96,7 +96,7 @@ jumarkot-platform/
 │   ├── api-contracts/          # Shared DTOs and API types
 │   └── event-schemas/          # JSON Schemas + EventSchemaValidator
 ├── services/                   # Microservices (to be added)
-│   ├── iam-service/
+│   ├── identity-access-service/
 │   ├── tenant-service/
 │   ├── event-ingestion-service/
 │   ├── decision-engine-service/

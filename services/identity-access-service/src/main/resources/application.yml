@@ -1,0 +1,64 @@
+server:
+  port: 8081
+  shutdown: graceful
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: identity-access-service
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:jumarkot_iam}
+    username: ${DB_USERNAME:jumarkot}
+    password: ${DB_PASSWORD:jumarkot}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: iam-pool
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: public
+    show-sql: false
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+jumarkot:
+  jwt:
+    private-key: ${JWT_PRIVATE_KEY}
+    public-key: ${JWT_PUBLIC_KEY}
+    issuer: ${JWT_ISSUER:jumarkot-iam}
+    access-token-ttl-seconds: ${JWT_ACCESS_TTL:900}
+    refresh-token-ttl-seconds: ${JWT_REFRESH_TTL:604800}
+
+logging:
+  level:
+    com.jumarkot.iam: INFO
+    org.springframework.security: WARN

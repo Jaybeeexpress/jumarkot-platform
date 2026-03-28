@@ -19,6 +19,7 @@ include(":packages:api-contracts")
 include(":packages:event-schemas")
 
 // ── Platform Services (to be added as scaffolded) ────────────────────────────
+include(":services:identity-access-service")
 // include(":services:iam-service")
 // include(":services:tenant-service")
 // include(":services:event-ingestion-service")
