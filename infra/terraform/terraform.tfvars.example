@@ -1,0 +1,7 @@
+aws_region         = "us-east-1"
+environment        = "production"
+eks_cluster_name   = "jumarkot-cluster"
+db_instance_class  = "db.t4g.large"
+redis_node_type    = "cache.t4g.medium"
+kafka_broker_count = 3
+# db_password is provided via TF_VAR_db_password env var in CI

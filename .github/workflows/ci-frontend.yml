@@ -1,0 +1,49 @@
+name: CI — Frontend Apps
+
+on:
+  push:
+    branches: [main, "copilot/**"]
+    paths:
+      - 'apps/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/**'
+
+jobs:
+  lint-typecheck-build:
+    name: Lint, Type-check & Build (${{ matrix.app }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+          - developer-portal
+          - ops-console
+
+    defaults:
+      run:
+        working-directory: apps/${{ matrix.app }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apps/${{ matrix.app }}/package.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run type-check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build

@@ -1,0 +1,16 @@
+apiVersion: v2
+name: jumarkot
+description: Jumarkot Platform — Risk, Fraud & Compliance Intelligence
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+
+keywords:
+  - fraud
+  - risk
+  - compliance
+  - fintech
+
+maintainers:
+  - name: Jumarkot Engineering
+    email: engineering@jumarkot.com

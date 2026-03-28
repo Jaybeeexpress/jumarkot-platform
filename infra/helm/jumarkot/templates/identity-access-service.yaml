@@ -1,0 +1,71 @@
+{{- if .Values.identityAccessService.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: identity-access-service
+  labels:
+    {{- include "jumarkot.labels" . | nindent 4 }}
+    app.kubernetes.io/component: identity-access-service
+spec:
+  replicas: {{ .Values.identityAccessService.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: identity-access-service
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: identity-access-service
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: identity-access-service
+          image: "{{ .Values.identityAccessService.image.repository }}:{{ .Values.identityAccessService.image.tag }}"
+          imagePullPolicy: {{ .Values.identityAccessService.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.identityAccessService.service.port }}
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "kubernetes"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jumarkot-secrets
+                  key: jwt-secret
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: jumarkot-secrets
+                  key: database-url
+          resources:
+            {{- toYaml .Values.identityAccessService.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: {{ .Values.identityAccessService.service.port }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: {{ .Values.identityAccessService.service.port }}
+            initialDelaySeconds: 20
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: identity-access-service
+  labels:
+    {{- include "jumarkot.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.identityAccessService.service.type }}
+  ports:
+    - port: {{ .Values.identityAccessService.service.port }}
+      targetPort: {{ .Values.identityAccessService.service.port }}
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: identity-access-service
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

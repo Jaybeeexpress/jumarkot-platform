@@ -1,0 +1,152 @@
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  environment: production
+  jwtSecret: "CHANGE_ME_IN_PRODUCTION"
+
+# ---------------------------------------------------------------
+# identity-access-service
+# ---------------------------------------------------------------
+identityAccessService:
+  enabled: true
+  image:
+    repository: jumarkot/identity-access-service
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 8081
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 1Gi
+  env:
+    JWT_SECRET: ""  # override via secret
+
+# ---------------------------------------------------------------
+# tenant-service
+# ---------------------------------------------------------------
+tenantService:
+  enabled: true
+  image:
+    repository: jumarkot/tenant-service
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 8082
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 1Gi
+
+# ---------------------------------------------------------------
+# event-ingestion-service
+# ---------------------------------------------------------------
+eventIngestionService:
+  enabled: true
+  image:
+    repository: jumarkot/event-ingestion-service
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  replicaCount: 3
+  service:
+    type: ClusterIP
+    port: 8083
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2
+      memory: 2Gi
+
+# ---------------------------------------------------------------
+# decision-engine-service
+# ---------------------------------------------------------------
+decisionEngineService:
+  enabled: true
+  image:
+    repository: jumarkot/decision-engine-service
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  replicaCount: 3
+  service:
+    type: ClusterIP
+    port: 8084
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2
+      memory: 2Gi
+
+# ---------------------------------------------------------------
+# rules-service
+# ---------------------------------------------------------------
+rulesService:
+  enabled: true
+  image:
+    repository: jumarkot/rules-service
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 8085
+
+# ---------------------------------------------------------------
+# alert-case-service
+# ---------------------------------------------------------------
+alertCaseService:
+  enabled: true
+  image:
+    repository: jumarkot/alert-case-service
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 8086
+
+# ---------------------------------------------------------------
+# Ingress
+# ---------------------------------------------------------------
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+  host: api.jumarkot.com
+  tls:
+    enabled: true
+    secretName: jumarkot-tls
+
+# ---------------------------------------------------------------
+# PostgreSQL (via Bitnami chart dependency)
+# ---------------------------------------------------------------
+postgresql:
+  enabled: true
+  auth:
+    username: jumarkot
+    password: ""  # override via secret
+    database: jumarkot
+
+# ---------------------------------------------------------------
+# Redis (via Bitnami chart dependency)
+# ---------------------------------------------------------------
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: ""  # override via secret
+  architecture: standalone
