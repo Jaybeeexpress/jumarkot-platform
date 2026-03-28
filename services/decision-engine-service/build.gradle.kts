@@ -24,4 +24,5 @@ dependencies {
     testImplementation(libs.testcontainers.junit)
     testImplementation(libs.testcontainers.pg)
     testImplementation(libs.testcontainers.kafka)
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
