@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -55,20 +56,32 @@ public class EventIngestionService {
                 .publishedAt(Instant.now())
                 .build();
 
-        kafkaTemplate.send(IngestionTopics.RAW_EVENTS, event.getId().toString(), domainEvent)
+        UUID eventId = event.getId();
+        kafkaTemplate.send(IngestionTopics.RAW_EVENTS, eventId.toString(), domainEvent)
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
-                        log.error("Failed to publish event to Kafka, eventId={}", event.getId(), ex);
+                        log.error("Failed to publish event to Kafka, eventId={}", eventId, ex);
                     } else {
                         long offset = result.getRecordMetadata().offset();
-                        event.setKafkaTopic(IngestionTopics.RAW_EVENTS);
-                        event.setKafkaOffset(offset);
-                        event.setStatus("PUBLISHED");
-                        eventRepository.save(event);
-                        log.info("Event published to Kafka, eventId={}, offset={}", event.getId(), offset);
+                        updateEventStatus(eventId, offset);
+                        log.info("Event published to Kafka, eventId={}, offset={}", eventId, offset);
                     }
                 });
 
         return event;
+    }
+
+    /**
+     * Updates the Kafka delivery status in a fresh transaction to avoid
+     * mutating the entity outside the original transactional boundary.
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void updateEventStatus(UUID eventId, long kafkaOffset) {
+        eventRepository.findById(eventId).ifPresent(e -> {
+            e.setKafkaTopic(IngestionTopics.RAW_EVENTS);
+            e.setKafkaOffset(kafkaOffset);
+            e.setStatus("PUBLISHED");
+            eventRepository.save(e);
+        });
     }
 }

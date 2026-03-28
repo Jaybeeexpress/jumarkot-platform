@@ -34,8 +34,8 @@ public class ApiKey {
     private String keyHash;
 
     @ElementCollection
-    @CollectionTable(name = "api_keys", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "scopes")
+    @CollectionTable(name = "api_key_scopes", joinColumns = @JoinColumn(name = "api_key_id"))
+    @Column(name = "scope")
     private List<String> scopes;
 
     @Column(nullable = false)

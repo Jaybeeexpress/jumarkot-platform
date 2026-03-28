@@ -19,3 +19,9 @@ CREATE INDEX idx_decisions_tenant_id      ON decisions (tenant_id);
 CREATE INDEX idx_decisions_entity_id      ON decisions (entity_id);
 CREATE INDEX idx_decisions_outcome        ON decisions (outcome);
 CREATE INDEX idx_decisions_evaluated_at   ON decisions (evaluated_at DESC);
+
+CREATE TABLE decision_reason_codes (
+    decision_id UUID NOT NULL REFERENCES decisions(id) ON DELETE CASCADE,
+    reason_code TEXT NOT NULL,
+    PRIMARY KEY (decision_id, reason_code)
+);

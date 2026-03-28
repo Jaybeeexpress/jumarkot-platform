@@ -15,6 +15,12 @@ CREATE TABLE users (
 CREATE INDEX idx_users_tenant_id ON users (tenant_id);
 CREATE INDEX idx_users_email     ON users (email);
 
+CREATE TABLE user_roles (
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role    TEXT NOT NULL,
+    PRIMARY KEY (user_id, role)
+);
+
 CREATE TABLE refresh_tokens (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id     UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -41,3 +47,9 @@ CREATE TABLE api_keys (
 
 CREATE INDEX idx_api_keys_tenant_id  ON api_keys (tenant_id);
 CREATE INDEX idx_api_keys_key_prefix ON api_keys (key_prefix);
+
+CREATE TABLE api_key_scopes (
+    api_key_id UUID NOT NULL REFERENCES api_keys(id) ON DELETE CASCADE,
+    scope      TEXT NOT NULL,
+    PRIMARY KEY (api_key_id, scope)
+);

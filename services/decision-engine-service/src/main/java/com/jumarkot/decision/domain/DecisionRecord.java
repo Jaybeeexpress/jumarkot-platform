@@ -42,8 +42,8 @@ public class DecisionRecord {
     private int riskScore;
 
     @ElementCollection
-    @CollectionTable(name = "decisions", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "reason_codes")
+    @CollectionTable(name = "decision_reason_codes", joinColumns = @JoinColumn(name = "decision_id"))
+    @Column(name = "reason_code")
     private List<String> reasonCodes;
 
     @Column(name = "recommended_action")

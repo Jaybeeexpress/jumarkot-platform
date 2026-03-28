@@ -39,8 +39,8 @@ public class User {
     private UserStatus status;
 
     @ElementCollection
-    @CollectionTable(name = "users", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "roles")
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
     private List<String> roles;
 
     @CreationTimestamp

@@ -1,7 +1,6 @@
 package com.jumarkot.decision.evaluation;
 
 import com.jumarkot.contracts.decision.DecisionOutcome;
-import com.jumarkot.contracts.decision.DecisionRequest;
 import lombok.Builder;
 import lombok.Value;
 
