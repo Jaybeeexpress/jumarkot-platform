@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: alert-case-service
+  datasource:
+    url: ${CASE_DB_URL:jdbc:postgresql://localhost:5432/case_db}
+    username: ${DB_USERNAME:jumarkot}
+    password: ${DB_PASSWORD:jumarkot_dev}
+  flyway:
+    enabled: false
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+    consumer:
+      group-id: alert-case-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+server:
+  port: ${PORT:8089}
+  shutdown: graceful
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

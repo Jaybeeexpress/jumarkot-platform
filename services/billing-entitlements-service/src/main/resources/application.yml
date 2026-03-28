@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: billing-entitlements-service
+  datasource:
+    url: ${BILLING_DB_URL:jdbc:postgresql://localhost:5432/billing_db}
+    username: ${DB_USERNAME:jumarkot}
+    password: ${DB_PASSWORD:jumarkot_dev}
+  flyway:
+    enabled: false
+server:
+  port: ${PORT:8083}
+  shutdown: graceful
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

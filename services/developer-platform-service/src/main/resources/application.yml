@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: developer-platform-service
+  datasource:
+    url: ${DEVELOPER_DB_URL:jdbc:postgresql://localhost:5432/developer_db}
+    username: ${DB_USERNAME:jumarkot}
+    password: ${DB_PASSWORD:jumarkot_dev}
+  flyway:
+    enabled: false
+server:
+  port: ${PORT:8090}
+  shutdown: graceful
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

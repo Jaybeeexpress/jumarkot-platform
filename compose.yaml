@@ -1,0 +1,10 @@
+services:
+  developerportal:
+    image: developerportal
+    build:
+      context: apps/developer-portal
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3000:3000
