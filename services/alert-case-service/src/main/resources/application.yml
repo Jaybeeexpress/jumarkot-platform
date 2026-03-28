@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: alert-case-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/jumarkot
+    username: jumarkot
+    password: jumarkot
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: 8086
