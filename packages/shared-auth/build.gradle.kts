@@ -16,4 +16,6 @@ dependencies {
     api(libs.spring.boot.redis)
     api(libs.jackson.databind)
     implementation(libs.commons.codec)
+
+    testImplementation(libs.spring.boot.test)
 }
