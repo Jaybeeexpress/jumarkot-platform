@@ -1,9 +1,6 @@
 package com.jumarkot.decision.engine;
 
-import com.jumarkot.rules.dto.RuleDto;
-
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
 /**
  * Extracts a field value from a DecisionRequest context for use in condition evaluation.
@@ -23,8 +20,7 @@ public class FieldExtractor {
         if (fieldPath == null || fieldPath.isBlank()) return null;
 
         if (fieldPath.startsWith("payload.")) {
-            String key = fieldPath.substring(8);
-            return ctx.payload() != null ? ctx.payload().get(key) : null;
+            return extractFromPayload(fieldPath.substring(8), ctx.payload());
         }
 
         return switch (fieldPath) {
@@ -37,5 +33,21 @@ public class FieldExtractor {
             case "userAgent"   -> ctx.userAgent();
             default            -> null;
         };
+    }
+
+    private Object extractFromPayload(String payloadPath, Map<String, Object> payload) {
+        if (payload == null || payloadPath.isBlank()) return null;
+
+        Object current = payload;
+        for (String segment : payloadPath.split("\\.")) {
+            if (!(current instanceof Map<?, ?> map)) {
+                return null;
+            }
+            current = map.get(segment);
+            if (current == null) {
+                return null;
+            }
+        }
+        return current;
     }
 }
