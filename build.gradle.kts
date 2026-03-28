@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.plugins.JavaPluginExtension
 
 plugins {
     alias(libs.plugins.spring.boot) apply false
@@ -8,7 +9,7 @@ plugins {
 subprojects {
     apply(plugin = "java")
 
-    java {
+    extensions.configure<JavaPluginExtension> {
         toolchain {
             languageVersion.set(JavaLanguageVersion.of(21))
         }

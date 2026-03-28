@@ -1,8 +1,15 @@
 plugins {
     `java-library`
+    alias(libs.plugins.spring.dependency.management)
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:${libs.versions.spring.boot.get()}")
+    }
 }
 
 dependencies {
     api(libs.spring.kafka)
-    api("com.fasterxml.jackson.core:jackson-databind")
+    api(libs.jackson.databind)
 }

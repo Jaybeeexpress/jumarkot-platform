@@ -1,6 +1,6 @@
 package com.jumarkot.decision.engine;
 
-import com.jumarkot.rules.domain.RuleOperator;
+import com.jumarkot.decision.rules.RuleOperator;
 
 import java.util.Arrays;
 

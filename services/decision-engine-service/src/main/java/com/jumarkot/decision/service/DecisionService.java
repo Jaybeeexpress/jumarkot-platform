@@ -6,7 +6,7 @@ import com.jumarkot.decision.engine.DecisionContext;
 import com.jumarkot.decision.engine.RuleEvaluator;
 import com.jumarkot.decision.kafka.DecisionEventPublisher;
 import com.jumarkot.decision.repository.DecisionRepository;
-import com.jumarkot.rules.dto.RuleDto;
+import com.jumarkot.decision.rules.RuleDto;
 import com.jumarkot.shared.auth.TenantContext;
 import com.jumarkot.shared.auth.TenantContextHolder;
 import org.slf4j.Logger;
@@ -90,14 +90,14 @@ public class DecisionService {
         );
 
         // ── Persist ───────────────────────────────────────────────────────────
-        decisionRepository.save(decisionId, tenant.tenantId(), tenant.environmentType().name(),
+        decisionRepository.save(decisionId, tenant.tenantId().toString(), tenant.environmentType().name(),
                 request, response, now);
 
         // ── Cache idempotency key ─────────────────────────────────────────────
         redis.opsForValue().set(idemKey, decisionId, IDEMPOTENCY_TTL);
 
         // ── Publish async event (non-blocking) ───────────────────────────────
-        eventPublisher.publish(tenant.tenantId(), decisionId, decision, score, request.entityId());
+        eventPublisher.publish(tenant.tenantId().toString(), decisionId, decision, score, request.entityId());
 
         log.info("Decision: id={} tenant={} entity={} score={} decision={}",
                 decisionId, tenant.tenantId(), request.entityId(), score, decision);

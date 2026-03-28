@@ -11,6 +11,7 @@ dependencyManagement {
 
 dependencies {
     api(project(":packages:api-contracts"))
+    api(libs.spring.boot.web)
     api(libs.spring.boot.security)
     api(libs.spring.boot.redis)
     api(libs.jackson.databind)

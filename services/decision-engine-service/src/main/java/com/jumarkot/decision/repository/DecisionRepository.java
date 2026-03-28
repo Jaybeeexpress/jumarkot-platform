@@ -5,6 +5,7 @@ import com.jumarkot.contracts.decision.DecisionResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jooq.DSLContext;
+import org.jooq.JSONB;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
@@ -41,8 +42,10 @@ public class DecisionRepository {
                     .set(DSL.field("risk_level"), resp.riskLevel().name())
                     .set(DSL.field("decision"), resp.decision().name())
                     .set(DSL.field("recommended_action"), resp.recommendedAction())
-                    .set(DSL.field("matched_rules"), DSL.val(objectMapper.writeValueAsString(resp.matchedRules())))
-                    .set(DSL.field("triggered_signals"), DSL.val(objectMapper.writeValueAsString(resp.triggeredSignals())))
+                        .set(DSL.field("matched_rules", JSONB.class),
+                            JSONB.valueOf(objectMapper.writeValueAsString(resp.matchedRules())))
+                        .set(DSL.field("triggered_signals", JSONB.class),
+                            JSONB.valueOf(objectMapper.writeValueAsString(resp.triggeredSignals())))
                     .set(DSL.field("idempotency_key"), req.idempotencyKey())
                     .set(DSL.field("correlation_id"), resp.correlationId())
                     .set(DSL.field("created_at"), createdAt)

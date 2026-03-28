@@ -2,7 +2,7 @@ package com.jumarkot.decision.engine;
 
 import com.jumarkot.contracts.decision.MatchedRule;
 import com.jumarkot.contracts.decision.TriggeredSignal;
-import com.jumarkot.rules.dto.RuleDto;
+import com.jumarkot.decision.rules.RuleDto;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

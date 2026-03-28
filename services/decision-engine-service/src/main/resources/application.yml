@@ -5,7 +5,7 @@ spring:
   datasource:
     url: ${DECISION_DB_URL:jdbc:postgresql://localhost:5432/decision_db}
     username: ${DB_USERNAME:jumarkot}
-    password: ${DB_PASSWORD:jumarkot_dev}
+    password: ${DB_PASSWORD:jumarkot_dev_secret}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 20
@@ -21,7 +21,7 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
+      password: ${REDIS_PASSWORD:jumarkot_redis_secret}
       timeout: 2000
       lettuce:
         pool:

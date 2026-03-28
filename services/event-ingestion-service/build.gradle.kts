@@ -19,5 +19,5 @@ dependencies {
 
     testImplementation(libs.spring.boot.test)
     testImplementation(libs.testcontainers.junit)
-    testImplementation(libs.testcontainers.postgresql)
+    testImplementation(libs.testcontainers.pg)
 }

@@ -62,7 +62,6 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
         } finally {
             TenantContextHolder.clear();
-            SecurityContextHolder.clearContext();
         }
     }
 
