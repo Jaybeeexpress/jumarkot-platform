@@ -1,0 +1,183 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.jumarkot.com/events/transaction.event.json",
+  "title": "TransactionEvent",
+  "description": "Represents a financial transaction event (payment, transfer, withdrawal, refund, etc.) submitted for risk and fraud evaluation.",
+  "type": "object",
+  "required": [
+    "transactionId",
+    "transactionType",
+    "amount",
+    "currency",
+    "originatorEntityId",
+    "originatorEntityType",
+    "occurredAt"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "transactionId": {
+      "type": "string",
+      "description": "Caller-assigned unique identifier for this transaction. Used for idempotency and correlation.",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "transactionType": {
+      "type": "string",
+      "description": "The type of transaction being evaluated.",
+      "enum": [
+        "PAYMENT",
+        "TRANSFER",
+        "WITHDRAWAL",
+        "DEPOSIT",
+        "REFUND",
+        "CHARGEBACK",
+        "FEE",
+        "ADJUSTMENT",
+        "CRYPTO_PURCHASE",
+        "CRYPTO_SALE"
+      ]
+    },
+    "amount": {
+      "type": "number",
+      "description": "Transaction amount in the major currency unit (e.g. 150.00 for USD 150).",
+      "minimum": 0,
+      "exclusiveMinimum": true,
+      "multipleOf": 0.000001
+    },
+    "currency": {
+      "type": "string",
+      "description": "ISO 4217 alphabetic currency code (e.g. USD, EUR, GBP).",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "originatorEntityId": {
+      "type": "string",
+      "description": "Identifier of the entity initiating the transaction (sender, payer).",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "originatorEntityType": {
+      "type": "string",
+      "description": "Type of the originating entity.",
+      "enum": ["USER", "ACCOUNT", "MERCHANT", "SYSTEM"]
+    },
+    "beneficiaryEntityId": {
+      "type": "string",
+      "description": "Identifier of the entity receiving value (recipient, payee). Optional for withdrawals.",
+      "maxLength": 256
+    },
+    "beneficiaryEntityType": {
+      "type": "string",
+      "description": "Type of the beneficiary entity.",
+      "enum": ["USER", "ACCOUNT", "MERCHANT", "EXTERNAL_BANK", "CRYPTO_WALLET", "SYSTEM"]
+    },
+    "channel": {
+      "type": "string",
+      "description": "The channel through which the transaction was initiated.",
+      "enum": ["WEB", "MOBILE_IOS", "MOBILE_ANDROID", "API", "BRANCH", "ATM", "POS", "BATCH"]
+    },
+    "ipAddress": {
+      "type": "string",
+      "description": "IPv4 or IPv6 address of the client initiating the transaction.",
+      "format": "ipv4"
+    },
+    "deviceFingerprint": {
+      "type": "string",
+      "description": "Hashed device fingerprint associated with the client session.",
+      "maxLength": 512
+    },
+    "geolocation": {
+      "type": "object",
+      "description": "Geographic location of the transaction initiation point.",
+      "required": ["countryCode"],
+      "additionalProperties": false,
+      "properties": {
+        "countryCode": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "regionCode": {
+          "type": "string",
+          "description": "ISO 3166-2 region/state code.",
+          "maxLength": 10
+        },
+        "city": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "latitude": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "longitude": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        }
+      }
+    },
+    "merchantDetails": {
+      "type": "object",
+      "description": "Present when the counterparty is a merchant.",
+      "additionalProperties": false,
+      "properties": {
+        "merchantId": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "merchantName": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "mcc": {
+          "type": "string",
+          "description": "Merchant Category Code (ISO 18245).",
+          "pattern": "^[0-9]{4}$"
+        },
+        "merchantCountry": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$"
+        }
+      }
+    },
+    "paymentMethod": {
+      "type": "object",
+      "description": "Details about the payment instrument used.",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["CARD", "BANK_ACCOUNT", "WALLET", "CRYPTO", "VOUCHER", "BNPL"]
+        },
+        "maskedIdentifier": {
+          "type": "string",
+          "description": "Masked or tokenized identifier (last 4 digits, IBAN suffix, etc.).",
+          "maxLength": 64
+        },
+        "binCountry": {
+          "type": "string",
+          "description": "Issuing country of the card BIN (if applicable).",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "tokenized": {
+          "type": "boolean",
+          "description": "Whether the identifier is a network token rather than a raw PAN."
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Arbitrary key-value pairs for tenant-specific enrichment signals.",
+      "additionalProperties": {
+        "type": ["string", "number", "boolean", "null"]
+      },
+      "maxProperties": 100
+    },
+    "occurredAt": {
+      "type": "string",
+      "description": "ISO 8601 UTC timestamp at which the transaction occurred.",
+      "format": "date-time"
+    }
+  }
+}
