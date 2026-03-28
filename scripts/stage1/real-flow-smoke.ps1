@@ -4,13 +4,14 @@ param(
     [string]$RulesBaseUrl = "http://localhost:8087",
     [string]$DecisionBaseUrl = "http://localhost:8085",
 
-    # Optional Basic auth credentials for services that require auth in local runs.
-    [string]$TenantBasicUser = "",
-    [string]$TenantBasicPassword = "",
-    [string]$IdentityBasicUser = "",
-    [string]$IdentityBasicPassword = "",
-    [string]$RulesBasicUser = "",
-    [string]$RulesBasicPassword = ""
+    # Basic auth credentials matching spring.security.user defaults in each service's application.yml.
+    # Override via -TenantBasicPassword etc. when running against non-default environments.
+    [string]$TenantBasicUser = "admin",
+    [string]$TenantBasicPassword = "changeme",
+    [string]$IdentityBasicUser = "admin",
+    [string]$IdentityBasicPassword = "changeme",
+    [string]$RulesBasicUser = "admin",
+    [string]$RulesBasicPassword = "changeme"
 )
 
 Set-StrictMode -Version Latest

@@ -15,6 +15,24 @@ spring:
     enabled: true
     locations: classpath:db/migration
 
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      # Password must match the Docker Compose redis requirepass value
+      password: ${REDIS_PASSWORD:jumarkot_redis_secret}
+      timeout: 2000
+      lettuce:
+        pool:
+          max-active: 8
+          min-idle: 1
+
+  # HTTP Basic credentials for admin/operator access (override via env vars in production)
+  security:
+    user:
+      name: ${RULES_SERVICE_USER:admin}
+      password: ${RULES_SERVICE_PASSWORD:changeme}
+
 server:
   port: ${RULES_SERVICE_PORT:8087}
 

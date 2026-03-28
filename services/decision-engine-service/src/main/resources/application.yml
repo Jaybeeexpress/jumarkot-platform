@@ -52,5 +52,7 @@ management:
 jumarkot:
   rules-service:
     base-url: ${RULES_SERVICE_URL:http://localhost:8087}
+    username: ${RULES_SERVICE_USER:admin}
+    password: ${RULES_SERVICE_PASSWORD:changeme}
   rules-cache:
     ttl-seconds: 60

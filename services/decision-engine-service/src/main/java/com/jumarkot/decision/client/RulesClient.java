@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -30,12 +31,18 @@ public class RulesClient {
     private final WebClient webClient;
     private final StringRedisTemplate redis;
     private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
+    private final String rulesServiceUser;
+    private final String rulesServicePassword;
 
     public RulesClient(WebClient.Builder builder,
                        @Value("${jumarkot.rules-service.base-url}") String baseUrl,
+                       @Value("${jumarkot.rules-service.username}") String rulesServiceUser,
+                       @Value("${jumarkot.rules-service.password}") String rulesServicePassword,
                        StringRedisTemplate redis,
                        com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
         this.webClient = builder.baseUrl(baseUrl).build();
+        this.rulesServiceUser = rulesServiceUser;
+        this.rulesServicePassword = rulesServicePassword;
         this.redis = redis;
         this.objectMapper = objectMapper;
     }
@@ -59,6 +66,7 @@ public class RulesClient {
                         .queryParam("tenantId", tenantId)
                         .queryParam("environmentType", environmentType)
                         .build())
+            .header(HttpHeaders.AUTHORIZATION, basicAuthHeader())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<RuleDto>>() {})
                 .block(Duration.ofSeconds(5));
@@ -72,5 +80,10 @@ public class RulesClient {
         }
 
         return rules;
+    }
+
+    private String basicAuthHeader() {
+        String credentials = rulesServiceUser + ":" + rulesServicePassword;
+        return "Basic " + java.util.Base64.getEncoder().encodeToString(credentials.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 }

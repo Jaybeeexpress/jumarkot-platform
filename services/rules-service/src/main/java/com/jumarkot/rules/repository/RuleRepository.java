@@ -6,6 +6,7 @@ import com.jumarkot.rules.domain.ConditionLogic;
 import com.jumarkot.rules.domain.RuleOperator;
 import com.jumarkot.rules.dto.RuleDto;
 import org.jooq.DSLContext;
+import org.jooq.JSONB;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
@@ -36,7 +37,7 @@ public class RuleRepository {
                 .set(DSL.field("category"),         rule.category())
                 .set(DSL.field("priority"),         rule.priority())
                 .set(DSL.field("status"),           "ACTIVE")
-                .set(DSL.field("conditions"),       serializeConditions(rule.conditions()))
+                .set(DSL.field("conditions", JSONB.class), JSONB.valueOf(serializeConditions(rule.conditions())))
                 .set(DSL.field("condition_logic"),  rule.conditionLogic().name())
                 .set(DSL.field("action"),           rule.action())
                 .set(DSL.field("score_adjustment"), rule.scoreAdjustment())
@@ -81,8 +82,10 @@ public class RuleRepository {
     }
 
     private RuleDto mapRow(org.jooq.Record r) {
-        List<RuleDto.RuleConditionDto> conditions = deserializeConditions(
-                r.get("conditions", String.class));
+        // Read the jsonb column via JSONB type to get the raw JSON string
+        JSONB conditionsJsonb = r.get("conditions", JSONB.class);
+        String conditionsJson = conditionsJsonb != null ? conditionsJsonb.data() : "[]";
+        List<RuleDto.RuleConditionDto> conditions = deserializeConditions(conditionsJson);
         return new RuleDto(
                 r.get("id", UUID.class),
                 r.get("tenant_id", UUID.class),
