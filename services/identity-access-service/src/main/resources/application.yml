@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: identity-access-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/jumarkot
+    username: jumarkot
+    password: jumarkot
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+server:
+  port: 8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+jumarkot:
+  jwt:
+    secret: ${JWT_SECRET:change-me-in-production-this-must-be-at-least-256-bits}
+    access-token-expiry-seconds: 900
+    refresh-token-expiry-seconds: 86400
