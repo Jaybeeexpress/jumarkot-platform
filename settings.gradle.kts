@@ -6,12 +6,6 @@ dependencyResolutionManagement {
         mavenCentral()
         maven { url = uri("https://packages.confluent.io/maven/") }
     }
-
-    versionCatalogs {
-        create("libs") {
-            from(files("gradle/libs.versions.toml"))
-        }
-    }
 }
 
 // ── Shared Packages ───────────────────────────────────────────────────────────
@@ -21,7 +15,7 @@ include(":packages:event-schemas")
 // ── Platform Services (to be added as scaffolded) ────────────────────────────
 include(":services:identity-access-service")
 // include(":services:iam-service")
-// include(":services:tenant-service")
+include(":services:tenant-service")
 // include(":services:event-ingestion-service")
 // include(":services:decision-engine-service")
 // include(":services:rules-engine-service")
