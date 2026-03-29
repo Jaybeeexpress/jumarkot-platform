@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -41,6 +42,8 @@ class ApiKeyAuthenticationFilterTest {
             chainCalled.set(true);
             assertNull(SecurityContextHolder.getContext().getAuthentication());
             assertFalse(TenantContextHolder.isPresent());
+            assertNotNull(((MockHttpServletRequest) req)
+                    .getAttribute(ApiKeyAuthenticationFilter.INVALID_API_KEY_REQUEST_ATTRIBUTE));
         };
 
         filter.doFilter(request, response, chain);
@@ -75,6 +78,8 @@ class ApiKeyAuthenticationFilterTest {
         FilterChain chain = (req, res) -> {
             chainSawAuth.set(SecurityContextHolder.getContext().getAuthentication() instanceof ApiKeyAuthentication);
             assertFalse(!TenantContextHolder.isPresent());
+            assertNull(((MockHttpServletRequest) req)
+                    .getAttribute(ApiKeyAuthenticationFilter.INVALID_API_KEY_REQUEST_ATTRIBUTE));
         };
 
         filter.doFilter(request, response, chain);
