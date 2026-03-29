@@ -19,7 +19,7 @@ spring:
 
 jumarkot:
   rules-service:
-    base-url: ${RULES_SERVICE_URL}
+    base-url: ${RULES_SERVICE_URL:${RULES_SERVICE_BASE_URL}}
     username: ${RULES_SERVICE_USER}
     password: ${RULES_SERVICE_PASSWORD}
 

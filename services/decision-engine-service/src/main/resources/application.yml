@@ -2,6 +2,11 @@ spring:
   application:
     name: decision-engine-service
 
+  # Decision engine uses API-key auth via shared-auth filter chain.
+  # Exclude default user-details auto config to avoid generated password behavior.
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+
   datasource:
     url: ${DECISION_DB_URL:jdbc:postgresql://localhost:5432/decision_db}
     username: ${DB_USERNAME:jumarkot}
@@ -37,7 +42,7 @@ spring:
       retries: 3
 
 server:
-  port: ${PORT:8085}
+  port: ${DECISION_SERVICE_PORT:${PORT:8085}}
   shutdown: graceful
 
 management:
@@ -51,7 +56,7 @@ management:
 
 jumarkot:
   rules-service:
-    base-url: ${RULES_SERVICE_URL:http://localhost:8087}
+    base-url: ${RULES_SERVICE_URL:${RULES_SERVICE_BASE_URL:http://localhost:8087}}
     username: ${RULES_SERVICE_USER:admin}
     password: ${RULES_SERVICE_PASSWORD:changeme}
   rules-cache:
