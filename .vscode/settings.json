@@ -1,0 +1,43 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+
+    // Prevents JDT from opening JARs in build/libs/ with exclusive file handles.
+    // Without this, the Java Language Server holds those JARs open (no FILE_SHARE_DELETE
+    // on Windows), and Gradle fails with "Unable to delete *.jar" when rebuilding.
+    // JDT uses the Gradle Tooling API for source-to-source subproject linking, so
+    // excluding build/ does not break IDE navigation or code completion.
+    "java.import.exclusions": [
+        "**/node_modules/**",
+        "**/.metadata/**",
+        "**/archetype-resources/**",
+        "**/META-INF/maven/**",
+        "**/build/**",
+        "**/.gradle/**"
+    ],
+
+    // Do not let JDT auto-compile — Gradle owns compilation.
+    // Eliminates a second path through which the IDE could hold JAR handles open.
+    "java.autobuild.enabled": false,
+
+    // Keep Gradle project model enabled so multi-module source linking works.
+    "java.import.gradle.enabled": true,
+
+    // Prompt rather than silently re-syncing when build files change, so the
+    // Tooling API import doesn't race with an in-progress Gradle invocation.
+    "java.configuration.updateBuildConfiguration": "automatic",
+
+    // Exclude heavy directories from the file watcher to reduce handle churn.
+    "files.watcherExclude": {
+        "**/.gradle/**": true,
+        "**/build/**": true,
+        "**/node_modules/**": true,
+        "**/.git/objects/**": true
+    },
+
+    // Keep build output out of Explorer search results.
+    "search.exclude": {
+        "**/build": true,
+        "**/.gradle": true,
+        "**/node_modules": true
+    }
+}
