@@ -3,7 +3,6 @@ package com.jumarkot.rules.repository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jumarkot.rules.domain.ConditionLogic;
-import com.jumarkot.rules.domain.RuleOperator;
 import com.jumarkot.rules.dto.RuleDto;
 import com.jumarkot.rules.exception.RuleNotFoundException;
 import org.jooq.DSLContext;
@@ -118,7 +117,6 @@ public class RuleRepository {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private List<RuleDto.RuleConditionDto> deserializeConditions(String json) {
         try {
             return objectMapper.readValue(json,

@@ -2,7 +2,6 @@ package com.jumarkot.rules.api;
 
 import com.jumarkot.contracts.common.ApiResponse;
 import com.jumarkot.rules.domain.ConditionLogic;
-import com.jumarkot.rules.domain.RuleOperator;
 import com.jumarkot.rules.dto.RuleDto;
 import com.jumarkot.rules.repository.RuleRepository;
 import jakarta.validation.Valid;

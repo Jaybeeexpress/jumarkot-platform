@@ -106,10 +106,8 @@ public class DecisionService {
     }
 
     private RiskDecision resolveDecision(RuleEvaluator.EvaluationResult eval, RiskLevel level) {
-        // If any matched rule explicitly demands a BLOCK or DECLINE, honour it
-        for (var matched : eval.matchedRules()) {
-            // In future: we can look up the rule action from the matched rule record
-        }
+        // Future extension: allow matched rule actions to override score-derived outcome.
+        // For Stage 1, decisioning remains purely score/risk-level based.
         return switch (level) {
             case LOW      -> RiskDecision.APPROVE;
             case MEDIUM   -> RiskDecision.REVIEW;

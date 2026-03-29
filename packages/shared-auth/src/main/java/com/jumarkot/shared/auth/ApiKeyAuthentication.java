@@ -3,8 +3,6 @@ package com.jumarkot.shared.auth;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.List;
-
 /**
  * Spring Security Authentication token populated after successful API key validation.
  * Authorities reflect the key's scopes, prefixed with "SCOPE_" to integrate
