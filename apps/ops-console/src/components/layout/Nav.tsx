@@ -1,12 +1,11 @@
 'use client';
 
+import type { Route } from 'next';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
 
-// Cast as string to satisfy experimental.typedRoutes — these routes exist in the app.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const links: Array<{ href: any; label: string }> = [
+const links: Array<{ href: Route; label: string }> = [
   { href: '/decisions', label: 'Decisions' },
   { href: '/rules',     label: 'Rules'      },
   { href: '/tenants',   label: 'Tenants'    },
