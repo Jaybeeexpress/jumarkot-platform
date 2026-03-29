@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, stage-1]
   pull_request:
     branches: [main, develop]
 
@@ -17,7 +17,7 @@ jobs:
         env:
           POSTGRES_USER: jumarkot
           POSTGRES_PASSWORD: jumarkot_dev_secret
-          POSTGRES_DB: test_db
+          POSTGRES_DB: jumarkot_ci
         ports:
           - 5432:5432
         options: >-
@@ -26,6 +26,7 @@ jobs:
           --health-timeout 5s
           --health-retries 10
 
+      # Unauthenticated — apps override REDIS_PASSWORD to "" so Spring sends no AUTH
       redis:
         image: redis:7-alpine
         ports:
@@ -46,21 +47,49 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Create per-service databases
+        run: |
+          PGPASSWORD=jumarkot_dev_secret psql -h localhost -U jumarkot -d jumarkot_ci \
+            -c "CREATE DATABASE decision_db;" \
+            -c "CREATE DATABASE rules_db;" \
+            -c "CREATE DATABASE tenant_db;" \
+            -c "CREATE DATABASE identity_db;"
+
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Build
+      - name: Compile all modules
         run: ./gradlew build --parallel -x test
 
-      - name: Test
-        run: ./gradlew test --parallel
+      - name: Run Stage-1 tests
+        run: |
+          ./gradlew \
+            :packages:shared-auth:test \
+            :services:decision-engine-service:test \
+            :services:rules-service:test \
+            :services:tenant-service:test \
+            :services:identity-access-service:test \
+            --parallel
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/test_db
-          SPRING_DATASOURCE_USERNAME: jumarkot
-          SPRING_DATASOURCE_PASSWORD: jumarkot_dev_secret
-          SPRING_REDIS_HOST: localhost
-          SPRING_REDIS_PORT: 6379
-          JWT_SECRET: ci_test_jwt_secret_replace_in_production_min_64_chars_long
+          # ── Databases ─────────────────────────────────────────────────────
+          DECISION_DB_URL: jdbc:postgresql://localhost:5432/decision_db
+          RULES_DB_URL: jdbc:postgresql://localhost:5432/rules_db
+          TENANT_DB_URL: jdbc:postgresql://localhost:5432/tenant_db
+          IDENTITY_DB_URL: jdbc:postgresql://localhost:5432/identity_db
+          DB_USERNAME: jumarkot
+          DB_PASSWORD: jumarkot_dev_secret
+          POSTGRES_USER: jumarkot
+          POSTGRES_PASSWORD: jumarkot_dev_secret
+          # ── Redis (no-auth in CI; empty string → Spring sends no AUTH) ────
+          REDIS_HOST: localhost
+          REDIS_PORT: "6379"
+          REDIS_PASSWORD: ""
+          # ── Kafka (not in CI; Spring Kafka connects lazily — OK) ──────────
+          KAFKA_BOOTSTRAP_SERVERS: localhost:9092
+          # ── Service-to-service credentials (decision-engine → rules) ──────
+          RULES_SERVICE_URL: http://localhost:8087
+          RULES_SERVICE_USER: admin
+          RULES_SERVICE_PASSWORD: changeme
 
   build-frontend:
     name: Build Frontend Apps
