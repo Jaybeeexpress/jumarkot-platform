@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jumarkot.rules.domain.ConditionLogic;
 import com.jumarkot.rules.domain.RuleOperator;
 import com.jumarkot.rules.dto.RuleDto;
+import com.jumarkot.rules.exception.RuleNotFoundException;
 import org.jooq.DSLContext;
 import org.jooq.JSONB;
 import org.jooq.impl.DSL;
@@ -73,12 +74,15 @@ public class RuleRepository {
     }
 
     public void updateStatus(UUID id, UUID tenantId, String status) {
-        dsl.update(DSL.table("rules"))
+        int rows = dsl.update(DSL.table("rules"))
                 .set(DSL.field("status"), status)
                 .set(DSL.field("updated_at"), DSL.currentOffsetDateTime())
                 .where(DSL.field("id").eq(id))
                 .and(DSL.field("tenant_id").eq(tenantId))
                 .execute();
+        if (rows == 0) {
+            throw new RuleNotFoundException(id);
+        }
     }
 
     private RuleDto mapRow(org.jooq.Record r) {
