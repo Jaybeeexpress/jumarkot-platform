@@ -1,0 +1,25 @@
+# Production profile — all sensitive values MUST be supplied via environment variables.
+# Activate with: SPRING_PROFILES_ACTIVE=prod
+# Spring Boot will refuse to start if any required variable is absent.
+
+spring:
+  datasource:
+    url: ${IDENTITY_DB_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+
+  security:
+    user:
+      name: ${IDENTITY_SERVICE_USER}
+      password: ${IDENTITY_SERVICE_PASSWORD}
+
+logging:
+  level:
+    com.jumarkot: INFO
+    root: WARN
