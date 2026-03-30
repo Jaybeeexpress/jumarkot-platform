@@ -24,6 +24,7 @@ export default function TenantsPage() {
   const [lookupInput, setLookupInput]         = useState('');
   const [activeLookupId, setActiveLookupId]   = useState('');
   const [provisioned, setProvisioned]         = useState<Tenant | null>(null);
+  const canLookupTenant = lookupInput.trim().length > 0;
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -129,12 +130,19 @@ export default function TenantsPage() {
                   className="flex-1 rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
                 />
                 <button
-                  onClick={() => setActiveLookupId(lookupInput)}
-                  className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+                  onClick={() => setActiveLookupId(lookupInput.trim())}
+                  disabled={!canLookupTenant}
+                  className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Look Up
                 </button>
               </div>
+
+              {!activeLookupId && (
+                <p className="mt-3 text-sm text-slate-500">
+                  Enter a tenant UUID to load tenant details and environments.
+                </p>
+              )}
 
               {tenantErrorMessage && <ErrorAlert message={tenantErrorMessage} />}
               {envsErrorMessage && <div className="mt-3"><ErrorAlert message={envsErrorMessage} /></div>}

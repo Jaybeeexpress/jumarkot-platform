@@ -37,7 +37,11 @@ export default function DecisionsPage() {
     mutationFn: (data: FormData) => {
       let parsedPayload: Record<string, unknown> = {};
       if (data.payload) {
-        try { parsedPayload = JSON.parse(data.payload); } catch { /* ignore */ }
+        try {
+          parsedPayload = JSON.parse(data.payload);
+        } catch {
+          throw new Error('INVALID_JSON_PAYLOAD');
+        }
       }
       return submitDecision({
         idempotencyKey: `ops-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,

@@ -13,6 +13,7 @@ export default function RulesPage() {
   const [tenantInput, setTenantInput]   = useState('');
   const [envInput, setEnvInput]         = useState('PRODUCTION');
   const [activeFilter, setActiveFilter] = useState({ tenantId: '', envType: '' });
+  const canLoadRules = tenantInput.trim().length > 0;
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['rules', activeFilter.tenantId, activeFilter.envType],
@@ -68,12 +69,21 @@ export default function RulesPage() {
             </select>
           </div>
           <button
-            onClick={() => setActiveFilter({ tenantId: tenantInput, envType: envInput })}
-            className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+            onClick={() =>
+              setActiveFilter({ tenantId: tenantInput.trim(), envType: envInput })
+            }
+            disabled={!canLoadRules}
+            className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Load Rules
           </button>
         </div>
+
+        {!activeFilter.tenantId && (
+          <p className="mb-4 text-sm text-slate-500">
+            Enter a tenant ID to load rules for a specific environment.
+          </p>
+        )}
 
         {listErrorMessage && <ErrorAlert message={listErrorMessage} />}
         {toggleErrorMessage && <ErrorAlert message={toggleErrorMessage} />}

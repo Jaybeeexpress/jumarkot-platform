@@ -15,8 +15,12 @@ function isApiErrorResponse(value: unknown): value is ApiErrorResponse {
 
 function resolveMessageByCode(errorCode: string): string | null {
   switch (errorCode) {
+    case 'MISSING_SERVICE_CONFIG':
+      return 'Required service configuration is missing. Verify backend URL and credentials in .env.local.';
     case 'NO_API_KEY':
       return 'Decision API key is missing in environment config. Set DECISION_API_KEY and retry.';
+    case 'INVALID_JSON_PAYLOAD':
+      return 'Payload must be valid JSON before submitting a decision.';
     case 'API_KEY_REQUIRED':
       return 'Decision API key is required. Configure DECISION_API_KEY before running evaluations.';
     case 'INVALID_API_KEY':
@@ -63,7 +67,7 @@ export function toUserFacingApiError(error: unknown, fallback: string): string {
   }
 
   if (error instanceof Error && error.message.trim()) {
-    return error.message;
+    return resolveMessageByCode(error.message) ?? error.message;
   }
 
   return fallback;
