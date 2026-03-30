@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Nav } from '@/components/layout/Nav';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
+import { toUserFacingApiError } from '@/lib/api/errors';
 import { listRules, updateRuleStatus } from '@/lib/api/rules';
 import type { RuleDto } from '@/types';
 
@@ -31,6 +32,12 @@ export default function RulesPage() {
   });
 
   const rules: RuleDto[] = data?.success ? (data.data as RuleDto[]) : [];
+  const listErrorMessage = error
+    ? toUserFacingApiError(error, 'Failed to load rules.')
+    : null;
+  const toggleErrorMessage = toggleStatus.error
+    ? toUserFacingApiError(toggleStatus.error, 'Failed to update rule status.')
+    : null;
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
@@ -68,7 +75,8 @@ export default function RulesPage() {
           </button>
         </div>
 
-        {error && <ErrorAlert message={(error as Error).message} />}
+        {listErrorMessage && <ErrorAlert message={listErrorMessage} />}
+        {toggleErrorMessage && <ErrorAlert message={toggleErrorMessage} />}
         {isLoading && <p className="text-sm text-slate-500">Loading rules…</p>}
         {!isLoading && activeFilter.tenantId && rules.length === 0 && !error && (
           <p className="text-sm text-slate-500">No active rules found for this tenant / environment.</p>

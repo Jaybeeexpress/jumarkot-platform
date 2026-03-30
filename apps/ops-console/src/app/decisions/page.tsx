@@ -9,6 +9,7 @@ import { Nav } from '@/components/layout/Nav';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { submitDecision } from '@/lib/api/decisions';
+import { toUserFacingApiError } from '@/lib/api/errors';
 import type { DecisionResponse } from '@/types';
 
 const schema = z.object({
@@ -48,6 +49,10 @@ export default function DecisionsPage() {
     },
     onSuccess: (res) => { if (res.success) setResult(res.data); },
   });
+
+  const mutationMessage = mutation.error
+    ? toUserFacingApiError(mutation.error, 'Evaluation failed. Please try again.')
+    : null;
 
   const inputCls =
     'mt-1 w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500';
@@ -89,9 +94,7 @@ export default function DecisionsPage() {
               />
             </div>
 
-            {mutation.error && (
-              <ErrorAlert message={(mutation.error as Error).message ?? 'Evaluation failed'} />
-            )}
+            {mutationMessage && <ErrorAlert message={mutationMessage} />}
 
             <button
               type="submit"
