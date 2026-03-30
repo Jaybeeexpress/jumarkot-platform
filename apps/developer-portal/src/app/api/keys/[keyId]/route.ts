@@ -10,8 +10,9 @@ function basicAuth() {
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { keyId: string } },
+  context: { params: Promise<{ keyId: string }> },
 ) {
+  const { keyId } = await context.params;
   const tenantId = request.nextUrl.searchParams.get('tenantId')?.trim() ?? '';
   const reason = request.nextUrl.searchParams.get('reason')?.trim() ?? 'Revoked via developer portal';
 
@@ -28,7 +29,7 @@ export async function DELETE(
 
   try {
     const upstream = await fetch(
-      `${IDENTITY_SERVICE_URL}/v1/api-keys/${encodeURIComponent(params.keyId)}?tenantId=${encodeURIComponent(tenantId)}&reason=${encodeURIComponent(reason)}`,
+      `${IDENTITY_SERVICE_URL}/v1/api-keys/${encodeURIComponent(keyId)}?tenantId=${encodeURIComponent(tenantId)}&reason=${encodeURIComponent(reason)}`,
       {
         method: 'DELETE',
         headers: {

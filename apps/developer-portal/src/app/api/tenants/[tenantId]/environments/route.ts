@@ -17,12 +17,13 @@ function jsonParseOrFallback(value: string, fallback: unknown) {
 }
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { tenantId: string } },
+  _request: NextRequest,
+  context: { params: Promise<{ tenantId: string }> },
 ) {
+  const { tenantId } = await context.params;
   try {
     const upstream = await fetch(
-      `${TENANT_SERVICE_URL}/v1/tenants/${encodeURIComponent(params.tenantId)}/environments`,
+      `${TENANT_SERVICE_URL}/v1/tenants/${encodeURIComponent(tenantId)}/environments`,
       {
         headers: {
           Authorization: basicAuth(),
