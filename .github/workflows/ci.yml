@@ -61,7 +61,7 @@ jobs:
       - name: Compile all modules
         run: ./gradlew build --parallel -x test
 
-      - name: Run Stage-1 tests
+      - name: Run backend tests
         run: |
           ./gradlew \
             :packages:shared-auth:test \
@@ -86,10 +86,15 @@ jobs:
           REDIS_PASSWORD: ""
           # ── Kafka (not in CI; Spring Kafka connects lazily — OK) ──────────
           KAFKA_BOOTSTRAP_SERVERS: localhost:9092
-          # ── Service-to-service credentials (decision-engine → rules) ──────
+          # ── Service-to-service credentials (decision-engine → rules-service) ──
           RULES_SERVICE_URL: http://localhost:8087
           RULES_SERVICE_USER: admin
           RULES_SERVICE_PASSWORD: changeme
+          # ── Per-service Basic auth credentials (must match spring.security.user) ─
+          TENANT_SERVICE_USER: admin
+          TENANT_SERVICE_PASSWORD: changeme
+          IDENTITY_SERVICE_USER: admin
+          IDENTITY_SERVICE_PASSWORD: changeme
 
   build-frontend:
     name: Build Frontend Apps
@@ -111,13 +116,9 @@ jobs:
         working-directory: apps/ops-console
         run: npm ci
 
-      - name: Run ops-console coverage gate
+      - name: Run ops-console CI gate (coverage + typecheck + build)
         working-directory: apps/ops-console
-        run: npm run test:coverage
-
-      - name: Build ops-console
-        working-directory: apps/ops-console
-        run: npm run build
+        run: npm run test:ci
 
       - name: Install & build developer-portal
         working-directory: apps/developer-portal
