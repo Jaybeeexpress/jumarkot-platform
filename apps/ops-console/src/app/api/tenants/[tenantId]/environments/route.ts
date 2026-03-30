@@ -13,8 +13,9 @@ function basicAuth() {
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { tenantId: string } },
+  context: { params: Promise<{ tenantId: string }> },
 ) {
+  const { tenantId } = await context.params;
   if (!TENANT_SERVICE_URL || !TENANT_USER || !TENANT_PASS) {
     return NextResponse.json(
       {
@@ -29,7 +30,7 @@ export async function GET(
 
   try {
     const upstream = await fetch(
-      `${TENANT_SERVICE_URL}/v1/tenants/${params.tenantId}/environments`,
+      `${TENANT_SERVICE_URL}/v1/tenants/${tenantId}/environments`,
       { headers: { Authorization: basicAuth() } },
     );
     const data = await upstream.json();

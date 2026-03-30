@@ -13,8 +13,9 @@ function basicAuth() {
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { ruleId: string } },
+  context: { params: Promise<{ ruleId: string }> },
 ) {
+  const { ruleId } = await context.params;
   if (!RULES_SERVICE_URL || !RULES_USER || !RULES_PASS) {
     return NextResponse.json(
       {
@@ -30,7 +31,7 @@ export async function PUT(
   const query = new URL(request.url).searchParams.toString();
   try {
     const upstream = await fetch(
-      `${RULES_SERVICE_URL}/v1/rules/${params.ruleId}/status${query ? '?' + query : ''}`,
+      `${RULES_SERVICE_URL}/v1/rules/${ruleId}/status${query ? '?' + query : ''}`,
       { method: 'PUT', headers: { Authorization: basicAuth() } },
     );
     if (upstream.status === 204) {
