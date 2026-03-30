@@ -27,6 +27,8 @@ import java.io.IOException;
 public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(ApiKeyAuthenticationFilter.class);
+    public static final String INVALID_API_KEY_REQUEST_ATTRIBUTE =
+            ApiKeyAuthenticationFilter.class.getName() + ".invalidApiKey";
     private static final String API_KEY_HEADER = "X-API-Key";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String API_KEY_PREFIX = "ApiKey ";
@@ -56,7 +58,7 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
                             tenantContext.tenantId(), tenantContext.environmentType());
                 } catch (InvalidApiKeyException e) {
                     log.debug("Invalid API key presented: {}", ApiKeyHasher.mask(rawKey));
-                    // Unauthenticated — let Spring Security return 401 downstream
+                    request.setAttribute(INVALID_API_KEY_REQUEST_ATTRIBUTE, Boolean.TRUE);
                 }
             }
             chain.doFilter(request, response);

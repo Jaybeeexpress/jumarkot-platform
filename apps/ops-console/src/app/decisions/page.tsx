@@ -8,7 +8,10 @@ import { useMutation } from '@tanstack/react-query';
 import { Nav } from '@/components/layout/Nav';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
+import { SuccessAlert } from '@/components/ui/SuccessAlert';
 import { submitDecision } from '@/lib/api/decisions';
+import { toUserFacingApiError } from '@/lib/api/errors';
+import { isSuccessfulResponse } from '@/lib/api/response';
 import type { DecisionResponse } from '@/types';
 
 const schema = z.object({
@@ -21,6 +24,7 @@ type FormData = z.infer<typeof schema>;
 
 export default function DecisionsPage() {
   const [result, setResult] = useState<DecisionResponse | null>(null);
+  const [lastDecisionId, setLastDecisionId] = useState<string | null>(null);
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -36,7 +40,11 @@ export default function DecisionsPage() {
     mutationFn: (data: FormData) => {
       let parsedPayload: Record<string, unknown> = {};
       if (data.payload) {
-        try { parsedPayload = JSON.parse(data.payload); } catch { /* ignore */ }
+        try {
+          parsedPayload = JSON.parse(data.payload);
+        } catch {
+          throw new Error('INVALID_JSON_PAYLOAD');
+        }
       }
       return submitDecision({
         idempotencyKey: `ops-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -46,8 +54,21 @@ export default function DecisionsPage() {
         payload:    parsedPayload,
       });
     },
-    onSuccess: (res) => { if (res.success) setResult(res.data); },
+    onMutate: () => {
+      setResult(null);
+      setLastDecisionId(null);
+    },
+    onSuccess: (res) => {
+      if (isSuccessfulResponse(res)) {
+        setResult(res.data);
+        setLastDecisionId(res.data.decisionId);
+      }
+    },
   });
+
+  const mutationMessage = mutation.error
+    ? toUserFacingApiError(mutation.error, 'Evaluation failed. Please try again.')
+    : null;
 
   const inputCls =
     'mt-1 w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500';
@@ -89,9 +110,7 @@ export default function DecisionsPage() {
               />
             </div>
 
-            {mutation.error && (
-              <ErrorAlert message={(mutation.error as Error).message ?? 'Evaluation failed'} />
-            )}
+            {mutationMessage && <ErrorAlert message={mutationMessage} />}
 
             <button
               type="submit"
@@ -103,9 +122,18 @@ export default function DecisionsPage() {
           </form>
 
           {/* ── Result panel ── */}
-          {result ? (
+          {mutation.isPending ? (
+            <div className="flex items-center justify-center rounded-lg border border-dashed bg-white p-12 text-sm text-slate-500">
+              Evaluating request with live backend services...
+            </div>
+          ) : result ? (
             <div className="rounded-lg border bg-white p-6 shadow-sm">
               <h2 className="mb-4 text-base font-medium text-slate-900">Result</h2>
+              {lastDecisionId && (
+                <div className="mb-4">
+                  <SuccessAlert message={`Evaluation completed. Decision ID: ${lastDecisionId}`} />
+                </div>
+              )}
               <dl className="space-y-3 text-sm">
                 <Row label="Decision"><StatusBadge value={result.decision} /></Row>
                 <Row label="Risk Level"><StatusBadge value={result.riskLevel} /></Row>

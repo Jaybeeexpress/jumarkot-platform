@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const RULES_SERVICE_URL =
-  process.env.RULES_SERVICE_URL ?? 'http://localhost:8087';
-const RULES_USER = process.env.RULES_SERVICE_USER ?? 'admin';
-const RULES_PASS = process.env.RULES_SERVICE_PASSWORD ?? 'changeme';
+const RULES_SERVICE_URL = process.env.RULES_SERVICE_URL;
+const RULES_USER = process.env.RULES_SERVICE_USER;
+const RULES_PASS = process.env.RULES_SERVICE_PASSWORD;
 
 function basicAuth() {
   return (
@@ -16,6 +15,18 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { ruleId: string } },
 ) {
+  if (!RULES_SERVICE_URL || !RULES_USER || !RULES_PASS) {
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'MISSING_SERVICE_CONFIG',
+        message:
+          'Rules service config is incomplete. Set RULES_SERVICE_URL, RULES_SERVICE_USER, and RULES_SERVICE_PASSWORD in .env.local.',
+      },
+      { status: 503 },
+    );
+  }
+
   const query = new URL(request.url).searchParams.toString();
   try {
     const upstream = await fetch(

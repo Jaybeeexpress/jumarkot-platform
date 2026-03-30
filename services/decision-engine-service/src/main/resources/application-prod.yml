@@ -5,8 +5,8 @@
 spring:
   datasource:
     url: ${DECISION_DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: ${DB_USERNAME:${POSTGRES_USER}}
+    password: ${DB_PASSWORD:${POSTGRES_PASSWORD}}
 
   data:
     redis:
@@ -19,9 +19,12 @@ spring:
 
 jumarkot:
   rules-service:
-    base-url: ${RULES_SERVICE_URL}
+    base-url: ${RULES_SERVICE_URL:${RULES_SERVICE_BASE_URL}}
     username: ${RULES_SERVICE_USER}
     password: ${RULES_SERVICE_PASSWORD}
+    connect-timeout: ${RULES_SERVICE_CONNECT_TIMEOUT}
+    read-timeout: ${RULES_SERVICE_READ_TIMEOUT}
+    block-timeout: ${RULES_SERVICE_BLOCK_TIMEOUT}
 
 logging:
   level:

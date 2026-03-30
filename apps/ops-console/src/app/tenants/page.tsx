@@ -8,6 +8,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { Nav } from '@/components/layout/Nav';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
+import { SuccessAlert } from '@/components/ui/SuccessAlert';
+import { toUserFacingApiError } from '@/lib/api/errors';
+import { isSuccessfulResponse } from '@/lib/api/response';
 import { provisionTenant, getTenant, getTenantEnvironments } from '@/lib/api/tenants';
 import type { Tenant } from '@/types';
 
@@ -23,6 +26,7 @@ export default function TenantsPage() {
   const [lookupInput, setLookupInput]         = useState('');
   const [activeLookupId, setActiveLookupId]   = useState('');
   const [provisioned, setProvisioned]         = useState<Tenant | null>(null);
+  const canLookupTenant = lookupInput.trim().length > 0;
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -31,7 +35,12 @@ export default function TenantsPage() {
 
   const provision = useMutation({
     mutationFn: provisionTenant,
-    onSuccess: (res) => { if (res.success) { setProvisioned(res.data); reset(); } },
+    onSuccess: (res) => {
+      if (isSuccessfulResponse(res)) {
+        setProvisioned(res.data);
+        reset();
+      }
+    },
   });
 
   const { data: tenantData, isLoading: tenantLoading, error: tenantError } = useQuery({
@@ -40,14 +49,23 @@ export default function TenantsPage() {
     enabled:  !!activeLookupId,
   });
 
-  const { data: envsData } = useQuery({
+  const { data: envsData, error: envsError } = useQuery({
     queryKey: ['tenant-environments', activeLookupId],
     queryFn:  () => getTenantEnvironments(activeLookupId),
     enabled:  !!activeLookupId,
   });
 
-  const tenant = tenantData?.success ? tenantData.data : null;
-  const environments = envsData?.success ? envsData.data : [];
+  const tenant = isSuccessfulResponse(tenantData) ? tenantData.data : null;
+  const environments = isSuccessfulResponse(envsData) ? envsData.data : [];
+  const provisionErrorMessage = provision.error
+    ? toUserFacingApiError(provision.error, 'Failed to provision tenant.')
+    : null;
+  const tenantErrorMessage = tenantError
+    ? toUserFacingApiError(tenantError, 'Failed to load tenant.')
+    : null;
+  const envsErrorMessage = envsError
+    ? toUserFacingApiError(envsError, 'Failed to load tenant environments.')
+    : null;
 
   const inputCls =
     'mt-1 w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500';
@@ -87,7 +105,7 @@ export default function TenantsPage() {
                 {errors.contactEmail && <p className="mt-1 text-xs text-red-600">{errors.contactEmail.message}</p>}
               </div>
 
-              {provision.error && <ErrorAlert message={(provision.error as Error).message} />}
+              {provisionErrorMessage && <ErrorAlert message={provisionErrorMessage} />}
 
               <button
                 type="submit"
@@ -119,15 +137,30 @@ export default function TenantsPage() {
                   className="flex-1 rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
                 />
                 <button
-                  onClick={() => setActiveLookupId(lookupInput)}
-                  className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+                  onClick={() => {
+                    setActiveLookupId(lookupInput.trim());
+                  }}
+                  disabled={!canLookupTenant}
+                  className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Look Up
                 </button>
               </div>
 
-              {tenantError && <ErrorAlert message={(tenantError as Error).message} />}
+              {!activeLookupId && (
+                <p className="mt-3 text-sm text-slate-500">
+                  Enter a tenant UUID to load tenant details and environments.
+                </p>
+              )}
+
+              {tenantErrorMessage && <ErrorAlert message={tenantErrorMessage} />}
+              {envsErrorMessage && <div className="mt-3"><ErrorAlert message={envsErrorMessage} /></div>}
               {tenantLoading && <p className="mt-3 text-sm text-slate-500">Loading…</p>}
+              {!tenantLoading && tenant && !tenantErrorMessage && (
+                <div className="mt-3">
+                  <SuccessAlert message={`Tenant loaded successfully: ${tenant.slug}`} />
+                </div>
+              )}
 
               {tenant && (
                 <dl className="mt-4 space-y-2 text-sm">
@@ -167,6 +200,11 @@ export default function TenantsPage() {
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+            {!tenantLoading && tenant && environments.length === 0 && !envsErrorMessage && (
+              <div className="rounded-lg border bg-white p-6 text-sm text-slate-500 shadow-sm">
+                No environments were returned for this tenant.
               </div>
             )}
           </div>

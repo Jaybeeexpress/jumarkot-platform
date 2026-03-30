@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const DECISION_SERVICE_URL =
-  process.env.DECISION_SERVICE_URL ?? 'http://localhost:8085';
+const DECISION_SERVICE_URL = process.env.DECISION_SERVICE_URL;
 const DECISION_API_KEY = process.env.DECISION_API_KEY ?? '';
 
 export async function POST(request: NextRequest) {
+  if (!DECISION_SERVICE_URL) {
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'MISSING_SERVICE_CONFIG',
+        message: 'DECISION_SERVICE_URL is not set in .env.local.',
+      },
+      { status: 503 },
+    );
+  }
+
   if (!DECISION_API_KEY) {
     return NextResponse.json(
       {
