@@ -3,12 +3,39 @@
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --border: 214.3 31.8% 91.4%;
-  --primary: 222.2 47.4% 11.2%;
-  --primary-foreground: 210 40% 98%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --radius: 0.5rem;
+  --canvas: #f6f0e8;
+  --ink: #1f2937;
+  --line: rgba(31, 41, 55, 0.12);
+  --brand: #0f766e;
+  --brand-strong: #134e4a;
+  --accent: #f59e0b;
+  --card: rgba(255, 252, 248, 0.86);
+  --card-strong: rgba(255, 255, 255, 0.94);
+  --radius: 1.25rem;
+}
+
+html {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top left, rgba(245, 158, 11, 0.22), transparent 28%),
+    radial-gradient(circle at top right, rgba(15, 118, 110, 0.18), transparent 24%),
+    linear-gradient(180deg, #fffaf4 0%, var(--canvas) 100%);
+}
+
+body {
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: var(--font-display), sans-serif;
+}
+
+* {
+  border-color: var(--line);
+}
+
+::selection {
+  background: rgba(15, 118, 110, 0.18);
+}
+
+.font-mono {
+  font-family: var(--font-mono), monospace;
 }
