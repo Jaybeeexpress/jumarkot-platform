@@ -147,4 +147,98 @@ describe('toUserFacingApiError', () => {
 
     expect(result).toBe('fallback');
   });
+
+  // ── Remaining error-code branches ────────────────────────────────────────
+
+  it('maps MISSING_SERVICE_CONFIG to guidance', () => {
+    vi.spyOn(axios, 'isAxiosError').mockReturnValue(false);
+
+    const result = toUserFacingApiError(new Error('MISSING_SERVICE_CONFIG'), 'fallback');
+
+    expect(result).toBe(
+      'Required service configuration is missing. Verify backend URL and credentials in .env.local.',
+    );
+  });
+
+  it('maps INVALID_JSON_PAYLOAD to guidance', () => {
+    vi.spyOn(axios, 'isAxiosError').mockReturnValue(false);
+
+    const result = toUserFacingApiError(new Error('INVALID_JSON_PAYLOAD'), 'fallback');
+
+    expect(result).toBe('Payload must be valid JSON before submitting a decision.');
+  });
+
+  it('maps API_KEY_REQUIRED to guidance', () => {
+    vi.spyOn(axios, 'isAxiosError').mockReturnValue(false);
+
+    const result = toUserFacingApiError(new Error('API_KEY_REQUIRED'), 'fallback');
+
+    expect(result).toBe(
+      'Decision API key is required. Configure DECISION_API_KEY before running evaluations.',
+    );
+  });
+
+  it('maps INVALID_API_KEY to guidance', () => {
+    vi.spyOn(axios, 'isAxiosError').mockReturnValue(false);
+
+    const result = toUserFacingApiError(new Error('INVALID_API_KEY'), 'fallback');
+
+    expect(result).toBe(
+      'Decision API key is invalid or revoked. Generate a new key in identity-access-service.',
+    );
+  });
+
+  it('maps BASIC_AUTH_REQUIRED to guidance', () => {
+    vi.spyOn(axios, 'isAxiosError').mockReturnValue(false);
+
+    const result = toUserFacingApiError(new Error('BASIC_AUTH_REQUIRED'), 'fallback');
+
+    expect(result).toBe(
+      'Service authentication is required. Verify service user/password settings in .env.local.',
+    );
+  });
+
+  it('maps UPSTREAM_ERROR to guidance', () => {
+    vi.spyOn(axios, 'isAxiosError').mockReturnValue(false);
+
+    const result = toUserFacingApiError(new Error('UPSTREAM_ERROR'), 'fallback');
+
+    expect(result).toBe(
+      'Could not reach upstream backend service. Confirm the service is running and reachable.',
+    );
+  });
+
+  // ── 403 status branch ─────────────────────────────────────────────────────
+
+  it('maps 403 axios responses to access-denied guidance', () => {
+    const error = {
+      response: {
+        status: 403,
+        data: { detail: 'forbidden' },
+      },
+    };
+    vi.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+
+    const result = toUserFacingApiError(error, 'fallback');
+
+    expect(result).toBe(
+      'Access denied (403). Verify tenant access and API/service credentials.',
+    );
+  });
+
+  // ── isApiErrorResponse null/falsy branch ─────────────────────────────────
+
+  it('falls through to status mapping when response data is null', () => {
+    const error = {
+      response: {
+        status: 400,
+        data: null,
+      },
+    };
+    vi.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+
+    const result = toUserFacingApiError(error, 'fallback');
+
+    expect(result).toBe('Request failed. Review configuration and try again.');
+  });
 });
