@@ -17,6 +17,7 @@ import java.util.Base64;
 
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -57,7 +58,7 @@ class TenantControllerSecurityWebTest {
     @Test
     void invalidBasicAuth_returnsUnauthorizedWithErrorEnvelope() throws Exception {
         mockMvc.perform(post("/v1/tenants")
-                                                .header(HttpHeaders.AUTHORIZATION, basicAuth("admin", "wrong-password"))
+                        .header(HttpHeaders.AUTHORIZATION, basicAuth("admin", "wrong-password"))
                         .header("X-Request-Id", "req-tenant-auth-invalid")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
@@ -73,8 +74,23 @@ class TenantControllerSecurityWebTest {
                 org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any());
     }
 
-        private String basicAuth(String username, String password) {
-                String value = username + ":" + password;
-                return "Basic " + Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8));
-        }
+    @Test
+    void listTenants_missingBasicAuth_returnsUnauthorizedWithErrorEnvelope() throws Exception {
+        mockMvc.perform(get("/v1/tenants")
+                        .header("X-Request-Id", "req-tenant-list-auth-missing"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(header().string(HttpHeaders.WWW_AUTHENTICATE, "Basic realm=\"Jumarkot\""))
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value("BASIC_AUTH_REQUIRED"))
+                .andExpect(jsonPath("$.message").value("Basic authentication is required"))
+                .andExpect(jsonPath("$.requestId").value("req-tenant-list-auth-missing"))
+                .andExpect(jsonPath("$.timestamp").exists());
+
+        verify(tenantService, never()).listTenants(org.mockito.ArgumentMatchers.anyInt());
+    }
+
+    private String basicAuth(String username, String password) {
+        String value = username + ":" + password;
+        return "Basic " + Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8));
+    }
 }

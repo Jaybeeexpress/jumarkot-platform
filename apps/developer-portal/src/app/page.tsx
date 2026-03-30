@@ -1,6 +1,6 @@
 'use client';
 
-import { startTransition, useDeferredValue, useState } from 'react';
+import { startTransition, useDeferredValue, useEffect, useState } from 'react';
 
 type SandboxResponse = {
   success: boolean;
@@ -61,6 +61,37 @@ type CreateKeyResponse = {
   };
 };
 
+type TenantSummary = {
+  id: string;
+  slug: string;
+  name: string;
+  status: string;
+  plan: string;
+  contactEmail: string;
+};
+
+type TenantEnvironment = {
+  id: string;
+  tenantId: string;
+  name: string;
+  type: 'SANDBOX' | 'PRODUCTION';
+  status: string;
+};
+
+type TenantListResponse = {
+  success: boolean;
+  message?: string;
+  errorCode?: string;
+  data?: TenantSummary[];
+};
+
+type TenantEnvironmentResponse = {
+  success: boolean;
+  message?: string;
+  errorCode?: string;
+  data?: TenantEnvironment[];
+};
+
 type EventDraft = {
   idempotencyKey: string;
   eventType: string;
@@ -81,6 +112,8 @@ type ApiKeyDraft = {
   name: string;
   scopes: string[];
 };
+
+type SelectOption = string | { value: string; label: string };
 
 const availableScopes = ['events:write', 'decisions:write', 'api-keys:read'];
 
@@ -161,19 +194,126 @@ export default function HomePage() {
   const [apiKey, setApiKey] = useState('');
   const [draft, setDraft] = useState<EventDraft>(() => createDefaultDraft());
   const [apiKeyDraft, setApiKeyDraft] = useState<ApiKeyDraft>(() => createDefaultApiKeyDraft());
+  const [tenants, setTenants] = useState<TenantSummary[]>([]);
+  const [environments, setEnvironments] = useState<TenantEnvironment[]>([]);
   const [recentEvents, setRecentEvents] = useState<RecentEvent[]>([]);
   const [keys, setKeys] = useState<ApiKeySummary[]>([]);
   const [result, setResult] = useState<SandboxResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [keyError, setKeyError] = useState<string | null>(null);
   const [historyError, setHistoryError] = useState<string | null>(null);
+  const [discoveryError, setDiscoveryError] = useState<string | null>(null);
   const [createdKey, setCreatedKey] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingKeys, setIsLoadingKeys] = useState(false);
   const [isCreatingKey, setIsCreatingKey] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [isLoadingTenants, setIsLoadingTenants] = useState(false);
+  const [isLoadingEnvironments, setIsLoadingEnvironments] = useState(false);
 
   const requestPreview = useDeferredValue(buildCurlSnippet(apiKey, draft));
+
+  useEffect(() => {
+    void loadTenants();
+  }, []);
+
+  useEffect(() => {
+    if (!apiKeyDraft.tenantId) {
+      setEnvironments([]);
+      setKeys([]);
+      return;
+    }
+
+    void loadEnvironments(apiKeyDraft.tenantId);
+    void loadKeys();
+  }, [apiKeyDraft.tenantId]);
+
+  async function loadTenants() {
+    setIsLoadingTenants(true);
+    setDiscoveryError(null);
+
+    try {
+      const response = await fetch('/api/tenants?limit=25', { cache: 'no-store' });
+      const data = (await response.json()) as TenantListResponse;
+      if (!response.ok || !data.success) {
+        setDiscoveryError(data.message ?? 'Could not load tenants.');
+        setTenants([]);
+        return;
+      }
+
+      const loadedTenants = data.data ?? [];
+      setTenants(loadedTenants);
+      setApiKeyDraft((current) => {
+        if (current.tenantId && loadedTenants.some((tenant) => tenant.id === current.tenantId)) {
+          return current;
+        }
+
+        const firstTenant = loadedTenants[0];
+        if (!firstTenant) {
+          return current;
+        }
+
+        return {
+          ...current,
+          tenantId: firstTenant.id,
+          environmentId: '',
+        };
+      });
+    } catch {
+      setDiscoveryError('The developer portal could not load tenants.');
+      setTenants([]);
+    } finally {
+      setIsLoadingTenants(false);
+    }
+  }
+
+  async function loadEnvironments(tenantId: string) {
+    setIsLoadingEnvironments(true);
+    setDiscoveryError(null);
+
+    try {
+      const response = await fetch(`/api/tenants/${encodeURIComponent(tenantId)}/environments`, {
+        cache: 'no-store',
+      });
+      const data = (await response.json()) as TenantEnvironmentResponse;
+      if (!response.ok || !data.success) {
+        setDiscoveryError(data.message ?? 'Could not load tenant environments.');
+        setEnvironments([]);
+        return;
+      }
+
+      const loadedEnvironments = data.data ?? [];
+      setEnvironments(loadedEnvironments);
+      setApiKeyDraft((current) => {
+        const existing = loadedEnvironments.find((environment) => environment.id === current.environmentId);
+        if (existing) {
+          return {
+            ...current,
+            environmentType: existing.type,
+          };
+        }
+
+        const preferred = loadedEnvironments.find((environment) => environment.type === 'SANDBOX') ?? loadedEnvironments[0];
+        if (!preferred) {
+          return {
+            ...current,
+            environmentId: '',
+          };
+        }
+
+        return {
+          ...current,
+          environmentId: preferred.id,
+          environmentType: preferred.type,
+        };
+      });
+    } catch {
+      setDiscoveryError('The developer portal could not load tenant environments.');
+      setEnvironments([]);
+    } finally {
+      setIsLoadingEnvironments(false);
+    }
+  }
 
   async function loadRecentEvents() {
     if (!apiKey.trim()) {
@@ -206,6 +346,7 @@ export default function HomePage() {
   async function loadKeys() {
     if (!apiKeyDraft.tenantId.trim()) {
       setKeyError('Tenant ID is required to list API keys.');
+      setKeys([]);
       return;
     }
 
@@ -364,8 +505,9 @@ export default function HomePage() {
               Ship an event into Jumarkot before you wire the real client.
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600 md:text-lg">
-              This first Stage-3 slice exposes live event ingestion for developers: API-key scoped writes,
-              idempotent acceptance, and a browser sandbox that mirrors the production contract.
+              This Stage-3 slice exposes live event ingestion for developers: API-key scoped writes,
+              idempotent acceptance, downstream projection, and a browser sandbox that mirrors the
+              production contract.
             </p>
           </div>
 
@@ -375,17 +517,17 @@ export default function HomePage() {
                 <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Scope</div>
                 <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-700">
                   <li>Durable event acceptance in event-ingestion-service with tenant-scoped idempotency.</li>
-                  <li>Kafka fan-out on accepted events with persisted delivery state tracking.</li>
-                  <li>Recent event history and API key workflows exposed directly in the developer portal.</li>
+                  <li>Kafka fan-out into entity-profile-service for the first downstream projection.</li>
+                  <li>Tenant discovery, API key workflows, and event history exposed in the developer portal.</li>
                 </ul>
               </div>
 
               <div className="rounded-[1.5rem] border border-[var(--line)] bg-slate-950 p-5 text-slate-100">
                 <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">What to provision</div>
                 <ol className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
-                  <li>Set identity and ingestion service URLs in the environment for the portal server routes.</li>
-                  <li>Create a sandbox API key with <span className="font-mono">events:write</span> directly in the portal.</li>
-                  <li>Submit a sample event and refresh the recent-event history to confirm delivery state.</li>
+                  <li>Set tenant, identity, and ingestion service URLs in the environment for the portal routes.</li>
+                  <li>Pick a tenant and environment from discovery dropdowns instead of pasting raw IDs.</li>
+                  <li>Create a sandbox API key, submit a sample event, and inspect delivery state.</li>
                 </ol>
               </div>
             </div>
@@ -425,11 +567,37 @@ export default function HomePage() {
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
-                <Field label="Tenant ID" value={apiKeyDraft.tenantId} onChange={(value) => setApiKeyDraft((current) => ({ ...current, tenantId: value }))} />
-                <Field label="Environment ID" value={apiKeyDraft.environmentId} onChange={(value) => setApiKeyDraft((current) => ({ ...current, environmentId: value }))} />
-                <SelectField label="Environment type" value={apiKeyDraft.environmentType} onChange={(value) => setApiKeyDraft((current) => ({ ...current, environmentType: value as 'SANDBOX' | 'PRODUCTION' }))} options={['SANDBOX', 'PRODUCTION']} />
+                <SelectField
+                  label="Tenant"
+                  value={apiKeyDraft.tenantId}
+                  onChange={(value) => setApiKeyDraft((current) => ({ ...current, tenantId: value, environmentId: '' }))}
+                  options={tenants.map((tenant) => ({ value: tenant.id, label: `${tenant.name} (${tenant.slug})` }))}
+                />
+                <SelectField
+                  label="Environment"
+                  value={apiKeyDraft.environmentId}
+                  onChange={(value) => {
+                    const environment = environments.find((candidate) => candidate.id === value);
+                    setApiKeyDraft((current) => ({
+                      ...current,
+                      environmentId: value,
+                      environmentType: environment?.type ?? current.environmentType,
+                    }));
+                  }}
+                  options={environments.map((environment) => ({
+                    value: environment.id,
+                    label: `${environment.name} (${environment.type})`,
+                  }))}
+                />
+                <Field label="Environment type" value={apiKeyDraft.environmentType} onChange={() => undefined} readOnly />
                 <Field label="Key name" value={apiKeyDraft.name} onChange={(value) => setApiKeyDraft((current) => ({ ...current, name: value }))} />
               </div>
+
+              {discoveryError && (
+                <div className="rounded-[1.25rem] border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+                  {discoveryError}
+                </div>
+              )}
 
               <div>
                 <div className="mb-2 block text-sm font-medium text-slate-700">Scopes</div>
@@ -458,6 +626,14 @@ export default function HomePage() {
               </div>
 
               <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={loadTenants}
+                  disabled={isLoadingTenants || isLoadingEnvironments}
+                  className="rounded-[1.25rem] border border-[var(--line)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-slate-700 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isLoadingTenants || isLoadingEnvironments ? 'Refreshing discovery...' : 'Refresh discovery'}
+                </button>
                 <button
                   type="button"
                   onClick={createKey}
@@ -502,7 +678,7 @@ export default function HomePage() {
                 <div className="mt-4 space-y-3">
                   {keys.length === 0 ? (
                     <div className="rounded-xl border border-dashed border-[var(--line)] px-4 py-6 text-sm text-slate-500">
-                      No API keys loaded yet. Provide a tenant ID and load keys.
+                      No API keys loaded yet. Pick a tenant above and load keys.
                     </div>
                   ) : (
                     keys.map((key) => (
@@ -686,10 +862,12 @@ function Field({
   label,
   value,
   onChange,
+  readOnly = false,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  readOnly?: boolean;
 }) {
   return (
     <label className="block">
@@ -697,6 +875,7 @@ function Field({
       <input
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        readOnly={readOnly}
         className="w-full rounded-2xl border border-[var(--line)] bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[var(--brand)] focus:ring-2 focus:ring-[rgba(15,118,110,0.12)]"
       />
     </label>
@@ -712,7 +891,7 @@ function SelectField({
   label: string;
   value: string;
   onChange: (value: string) => void;
-  options: string[];
+  options: SelectOption[];
 }) {
   return (
     <label className="block">
@@ -722,12 +901,17 @@ function SelectField({
         onChange={(event) => onChange(event.target.value)}
         className="w-full rounded-2xl border border-[var(--line)] bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[var(--brand)] focus:ring-2 focus:ring-[rgba(15,118,110,0.12)]"
       >
+        {options.length === 0 && <option value="">No options available</option>}
         {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
+          <option
+            key={typeof option === 'string' ? option : option.value}
+            value={typeof option === 'string' ? option : option.value}
+          >
+            {typeof option === 'string' ? option : option.label}
           </option>
         ))}
       </select>
     </label>
   );
 }
+
