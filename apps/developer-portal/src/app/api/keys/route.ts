@@ -1,23 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const IDENTITY_SERVICE_URL = process.env.IDENTITY_SERVICE_URL;
-const IDENTITY_SERVICE_USER = process.env.IDENTITY_SERVICE_USER;
-const IDENTITY_SERVICE_PASSWORD = process.env.IDENTITY_SERVICE_PASSWORD;
+const IDENTITY_SERVICE_URL = process.env.IDENTITY_SERVICE_URL ?? 'http://localhost:8081';
+const IDENTITY_SERVICE_USER = process.env.IDENTITY_SERVICE_USER ?? 'admin';
+const IDENTITY_SERVICE_PASSWORD = process.env.IDENTITY_SERVICE_PASSWORD ?? 'changeme';
 
 function basicAuth() {
   return 'Basic ' + Buffer.from(`${IDENTITY_SERVICE_USER}:${IDENTITY_SERVICE_PASSWORD}`).toString('base64');
-}
-
-function missingConfigResponse() {
-  return NextResponse.json(
-    {
-      success: false,
-      errorCode: 'MISSING_SERVICE_CONFIG',
-      message:
-        'Identity service config is incomplete. Set IDENTITY_SERVICE_URL, IDENTITY_SERVICE_USER, and IDENTITY_SERVICE_PASSWORD in the environment.',
-    },
-    { status: 503 },
-  );
 }
 
 function jsonParseOrFallback(value: string, fallback: unknown) {
@@ -29,10 +17,6 @@ function jsonParseOrFallback(value: string, fallback: unknown) {
 }
 
 export async function GET(request: NextRequest) {
-  if (!IDENTITY_SERVICE_URL || !IDENTITY_SERVICE_USER || !IDENTITY_SERVICE_PASSWORD) {
-    return missingConfigResponse();
-  }
-
   const tenantId = request.nextUrl.searchParams.get('tenantId')?.trim() ?? '';
   if (!tenantId) {
     return NextResponse.json(
@@ -68,10 +52,6 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  if (!IDENTITY_SERVICE_URL || !IDENTITY_SERVICE_USER || !IDENTITY_SERVICE_PASSWORD) {
-    return missingConfigResponse();
-  }
-
   try {
     const body = await request.json();
     const upstream = await fetch(`${IDENTITY_SERVICE_URL}/v1/api-keys`, {

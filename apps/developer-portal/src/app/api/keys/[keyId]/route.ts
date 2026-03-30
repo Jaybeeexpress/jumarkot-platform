@@ -1,33 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const IDENTITY_SERVICE_URL = process.env.IDENTITY_SERVICE_URL;
-const IDENTITY_SERVICE_USER = process.env.IDENTITY_SERVICE_USER;
-const IDENTITY_SERVICE_PASSWORD = process.env.IDENTITY_SERVICE_PASSWORD;
+const IDENTITY_SERVICE_URL = process.env.IDENTITY_SERVICE_URL ?? 'http://localhost:8081';
+const IDENTITY_SERVICE_USER = process.env.IDENTITY_SERVICE_USER ?? 'admin';
+const IDENTITY_SERVICE_PASSWORD = process.env.IDENTITY_SERVICE_PASSWORD ?? 'changeme';
 
 function basicAuth() {
   return 'Basic ' + Buffer.from(`${IDENTITY_SERVICE_USER}:${IDENTITY_SERVICE_PASSWORD}`).toString('base64');
-}
-
-function missingConfigResponse() {
-  return NextResponse.json(
-    {
-      success: false,
-      errorCode: 'MISSING_SERVICE_CONFIG',
-      message:
-        'Identity service config is incomplete. Set IDENTITY_SERVICE_URL, IDENTITY_SERVICE_USER, and IDENTITY_SERVICE_PASSWORD in the environment.',
-    },
-    { status: 503 },
-  );
 }
 
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { keyId: string } },
 ) {
-  if (!IDENTITY_SERVICE_URL || !IDENTITY_SERVICE_USER || !IDENTITY_SERVICE_PASSWORD) {
-    return missingConfigResponse();
-  }
-
   const tenantId = request.nextUrl.searchParams.get('tenantId')?.trim() ?? '';
   const reason = request.nextUrl.searchParams.get('reason')?.trim() ?? 'Revoked via developer portal';
 
