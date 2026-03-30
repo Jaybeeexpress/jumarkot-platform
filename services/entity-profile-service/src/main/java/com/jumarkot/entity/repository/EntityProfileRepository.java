@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jumarkot.entity.domain.EntityProfileSnapshot;
 import org.jooq.DSLContext;
-import org.jooq.JSONB;
 import org.springframework.stereotype.Repository;
 
 @Repository
