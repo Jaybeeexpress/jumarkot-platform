@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
             .requestMatchers("/actuator/health", "/actuator/info", "/error").permitAll()
             .requestMatchers(HttpMethod.POST, "/v1/events").hasAuthority("SCOPE_events:write")
+            .requestMatchers(HttpMethod.GET, "/v1/events").hasAuthority("SCOPE_events:write")
                         .anyRequest().authenticated())
         .exceptionHandling(ex -> ex
             .authenticationEntryPoint((request, response, authException) ->

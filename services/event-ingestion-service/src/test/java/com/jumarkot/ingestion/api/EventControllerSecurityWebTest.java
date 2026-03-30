@@ -21,6 +21,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -97,6 +98,26 @@ class EventControllerSecurityWebTest {
                 .andExpect(jsonPath("$.timestamp").exists());
 
         verify(eventIngestionService, never()).ingest(any());
+    }
+
+    @Test
+    void recentEvents_requiresEventsWriteScope() throws Exception {
+        when(apiKeyResolver.resolve(anyString())).thenReturn(new TenantContext(
+                UUID.fromString("11111111-1111-1111-1111-111111111111"),
+                null,
+                UUID.fromString("22222222-2222-2222-2222-222222222222"),
+                TenantContext.EnvironmentType.SANDBOX,
+                List.of("decisions:write"),
+                UUID.fromString("33333333-3333-3333-3333-333333333333")
+        ));
+
+        mockMvc.perform(get("/v1/events")
+                        .param("limit", "5")
+                        .header("X-API-Key", "jk_test_scope_mismatch")
+                        .header("X-Request-Id", "req-events-recent-scope-001"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value("INSUFFICIENT_SCOPE"));
     }
 
     private String validPayload() {

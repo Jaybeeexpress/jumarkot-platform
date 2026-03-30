@@ -2,6 +2,64 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const EVENT_INGESTION_SERVICE_URL = process.env.EVENT_INGESTION_SERVICE_URL;
 
+function jsonParseOrFallback(value: string, fallback: unknown) {
+  try {
+    return value ? JSON.parse(value) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+export async function GET(request: NextRequest) {
+  if (!EVENT_INGESTION_SERVICE_URL) {
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'MISSING_SERVICE_CONFIG',
+        message: 'EVENT_INGESTION_SERVICE_URL is not set in the environment.',
+      },
+      { status: 503 },
+    );
+  }
+
+  const searchParams = request.nextUrl.searchParams;
+  const apiKey = searchParams.get('apiKey')?.trim() ?? '';
+  const limit = searchParams.get('limit')?.trim() ?? '10';
+
+  if (!apiKey) {
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'API_KEY_REQUIRED',
+        message: 'Provide a valid API key to load recent events.',
+      },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const upstream = await fetch(`${EVENT_INGESTION_SERVICE_URL}/v1/events?limit=${encodeURIComponent(limit)}`, {
+      headers: {
+        'X-API-Key': apiKey,
+      },
+      cache: 'no-store',
+    });
+
+    const responseText = await upstream.text();
+    const data = jsonParseOrFallback(responseText, { success: upstream.ok });
+    return NextResponse.json(data, { status: upstream.status });
+  } catch {
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'UPSTREAM_ERROR',
+        message: 'Could not reach event-ingestion-service.',
+      },
+      { status: 502 },
+    );
+  }
+}
+
 export async function POST(request: NextRequest) {
   if (!EVENT_INGESTION_SERVICE_URL) {
     return NextResponse.json(
@@ -64,7 +122,7 @@ export async function POST(request: NextRequest) {
     });
 
     const responseText = await upstream.text();
-    const data = responseText ? JSON.parse(responseText) : { success: upstream.ok };
+    const data = jsonParseOrFallback(responseText, { success: upstream.ok });
     return NextResponse.json(data, { status: upstream.status });
   } catch {
     return NextResponse.json(

@@ -21,5 +21,8 @@ public record IngestedEvent(
         String sessionId,
         String userAgent,
         String ingestionStatus,
+        String deliveryStatus,
+        Instant publishedAt,
+        String lastDeliveryError,
         Instant createdAt
 ) {}

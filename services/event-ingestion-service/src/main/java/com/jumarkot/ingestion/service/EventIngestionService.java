@@ -2,6 +2,7 @@ package com.jumarkot.ingestion.service;
 
 import com.jumarkot.contracts.event.EventPayload;
 import com.jumarkot.ingestion.domain.IngestedEvent;
+import com.jumarkot.ingestion.kafka.IngestionEventPublisher;
 import com.jumarkot.ingestion.repository.IngestedEventRepository;
 import com.jumarkot.shared.auth.TenantContext;
 import com.jumarkot.shared.auth.TenantContextHolder;
@@ -9,15 +10,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 public class EventIngestionService {
 
     private final IngestedEventRepository repository;
+    private final IngestionEventPublisher ingestionEventPublisher;
 
-    public EventIngestionService(IngestedEventRepository repository) {
+    public EventIngestionService(IngestedEventRepository repository,
+                                 IngestionEventPublisher ingestionEventPublisher) {
         this.repository = repository;
+        this.ingestionEventPublisher = ingestionEventPublisher;
     }
 
     @Transactional
@@ -28,11 +33,30 @@ public class EventIngestionService {
                 .map(existing -> new IngestionResult(
                         existing.eventId(),
                         existing.status(),
+                    existing.deliveryStatus(),
                         existing.createdAt(),
                         true
                 ))
                 .orElseGet(() -> createEvent(payload, tenantContext));
     }
+
+            @Transactional(readOnly = true)
+            public List<RecentEvent> recent(int limit) {
+            TenantContext tenantContext = TenantContextHolder.require();
+            return repository.findRecentByTenantId(tenantContext.tenantId(), limit).stream()
+                .map(event -> new RecentEvent(
+                    event.eventId(),
+                    event.idempotencyKey(),
+                    event.eventType(),
+                    event.entityId(),
+                    event.entityType(),
+                    event.ingestionStatus(),
+                    event.deliveryStatus(),
+                    event.createdAt(),
+                    event.publishedAt()
+                ))
+                .toList();
+            }
 
     private IngestionResult createEvent(EventPayload payload, TenantContext tenantContext) {
         Instant now = Instant.now();
@@ -53,11 +77,27 @@ public class EventIngestionService {
                 payload.sessionId(),
                 payload.userAgent(),
                 "ACCEPTED",
+                "PENDING",
+                null,
+                null,
                 now
         );
         repository.insert(event);
-        return new IngestionResult(event.id(), event.ingestionStatus(), event.createdAt(), false);
+            ingestionEventPublisher.publish(event);
+            return new IngestionResult(event.id(), event.ingestionStatus(), event.deliveryStatus(), event.createdAt(), false);
     }
 
-    public record IngestionResult(UUID eventId, String status, Instant acceptedAt, boolean duplicate) {}
+            public record IngestionResult(UUID eventId, String status, String deliveryStatus, Instant acceptedAt, boolean duplicate) {}
+
+            public record RecentEvent(
+                UUID eventId,
+                String idempotencyKey,
+                String eventType,
+                String entityId,
+                String entityType,
+                String ingestionStatus,
+                String deliveryStatus,
+                Instant createdAt,
+                Instant publishedAt
+            ) {}
 }

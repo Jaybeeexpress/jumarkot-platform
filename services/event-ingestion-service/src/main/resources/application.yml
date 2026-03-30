@@ -26,6 +26,8 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: 1
+      retries: 3
 server:
   port: ${INGESTION_SERVICE_PORT:${PORT:8084}}
   shutdown: graceful
@@ -38,3 +40,7 @@ management:
 logging:
   level:
     com.jumarkot: DEBUG
+
+jumarkot:
+  ingestion:
+    events-topic: ${EVENT_INGESTION_TOPIC:events.ingested}

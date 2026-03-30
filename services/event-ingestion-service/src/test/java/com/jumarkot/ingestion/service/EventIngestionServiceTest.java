@@ -3,6 +3,7 @@ package com.jumarkot.ingestion.service;
 import com.jumarkot.contracts.event.EventPayload;
 import com.jumarkot.contracts.event.EventType;
 import com.jumarkot.ingestion.domain.IngestedEvent;
+import com.jumarkot.ingestion.kafka.IngestionEventPublisher;
 import com.jumarkot.ingestion.repository.IngestedEventRepository;
 import com.jumarkot.shared.auth.TenantContext;
 import com.jumarkot.shared.auth.TenantContextHolder;
@@ -30,6 +31,9 @@ class EventIngestionServiceTest {
     @Mock
     private IngestedEventRepository repository;
 
+    @Mock
+    private IngestionEventPublisher ingestionEventPublisher;
+
     @InjectMocks
     private EventIngestionService service;
 
@@ -54,9 +58,11 @@ class EventIngestionServiceTest {
         IngestedEvent inserted = captor.getValue();
         assertThat(result.duplicate()).isFalse();
         assertThat(result.status()).isEqualTo("ACCEPTED");
+        assertThat(result.deliveryStatus()).isEqualTo("PENDING");
         assertThat(inserted.tenantId()).isEqualTo(tenantContext().tenantId());
         assertThat(inserted.idempotencyKey()).isEqualTo(payload.idempotencyKey());
         assertThat(inserted.eventType()).isEqualTo(payload.eventType().name());
+        verify(ingestionEventPublisher).publish(inserted);
     }
 
     @Test
@@ -67,14 +73,41 @@ class EventIngestionServiceTest {
         Instant createdAt = Instant.parse("2026-03-30T02:15:00Z");
 
         when(repository.findByTenantIdAndIdempotencyKey(tenantContext().tenantId(), payload.idempotencyKey()))
-                .thenReturn(Optional.of(new IngestedEventRepository.EventReceipt(existingId, "ACCEPTED", createdAt)));
+            .thenReturn(Optional.of(new IngestedEventRepository.EventReceipt(existingId, "ACCEPTED", "PUBLISHED", Instant.parse("2026-03-30T02:15:10Z"), createdAt)));
 
         EventIngestionService.IngestionResult result = service.ingest(payload);
 
         assertThat(result.duplicate()).isTrue();
         assertThat(result.eventId()).isEqualTo(existingId);
         assertThat(result.acceptedAt()).isEqualTo(createdAt);
+        assertThat(result.deliveryStatus()).isEqualTo("PUBLISHED");
         verify(repository, never()).insert(org.mockito.ArgumentMatchers.any());
+        verify(ingestionEventPublisher, never()).publish(org.mockito.ArgumentMatchers.any());
+        }
+
+        @Test
+        void returnsRecentEventsForCurrentTenant() {
+        TenantContextHolder.set(tenantContext());
+        Instant createdAt = Instant.parse("2026-03-30T02:15:00Z");
+
+        when(repository.findRecentByTenantId(tenantContext().tenantId(), 5))
+            .thenReturn(java.util.List.of(new IngestedEventRepository.RecentEventRecord(
+                UUID.fromString("55555555-5555-5555-5555-555555555555"),
+                "evt-unit-001",
+                "LOGIN_ATTEMPT",
+                "user-123",
+                "USER",
+                "ACCEPTED",
+                "PUBLISHED",
+                createdAt,
+                createdAt.plusSeconds(1)
+            )));
+
+        java.util.List<EventIngestionService.RecentEvent> events = service.recent(5);
+
+        assertThat(events).hasSize(1);
+        assertThat(events.get(0).deliveryStatus()).isEqualTo("PUBLISHED");
+        assertThat(events.get(0).idempotencyKey()).isEqualTo("evt-unit-001");
     }
 
     private TenantContext tenantContext() {

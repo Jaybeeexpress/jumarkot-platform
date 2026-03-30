@@ -17,6 +17,9 @@ CREATE TABLE ingested_events (
     session_id        VARCHAR(255),
     user_agent        TEXT,
     ingestion_status  VARCHAR(20)  NOT NULL DEFAULT 'ACCEPTED' CHECK (ingestion_status IN ('ACCEPTED')),
+    delivery_status   VARCHAR(20)  NOT NULL DEFAULT 'PENDING' CHECK (delivery_status IN ('PENDING', 'PUBLISHED', 'FAILED')),
+    published_at      TIMESTAMPTZ,
+    last_delivery_error TEXT,
     created_at        TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
 
     CONSTRAINT ingested_events_pkey PRIMARY KEY (id)
@@ -30,3 +33,6 @@ CREATE INDEX idx_ingested_events_tenant_created_at
 
 CREATE INDEX idx_ingested_events_event_type
     ON ingested_events (event_type);
+
+CREATE INDEX idx_ingested_events_delivery_status
+    ON ingested_events (delivery_status, created_at DESC);
