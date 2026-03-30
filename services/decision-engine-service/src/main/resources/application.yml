@@ -59,5 +59,8 @@ jumarkot:
     base-url: ${RULES_SERVICE_URL:${RULES_SERVICE_BASE_URL:http://localhost:8087}}
     username: ${RULES_SERVICE_USER:admin}
     password: ${RULES_SERVICE_PASSWORD:changeme}
+    connect-timeout: ${RULES_SERVICE_CONNECT_TIMEOUT:2s}
+    read-timeout: ${RULES_SERVICE_READ_TIMEOUT:5s}
+    block-timeout: ${RULES_SERVICE_BLOCK_TIMEOUT:6s}
   rules-cache:
     ttl-seconds: 60

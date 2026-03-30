@@ -22,6 +22,9 @@ jumarkot:
     base-url: ${RULES_SERVICE_URL:${RULES_SERVICE_BASE_URL}}
     username: ${RULES_SERVICE_USER}
     password: ${RULES_SERVICE_PASSWORD}
+    connect-timeout: ${RULES_SERVICE_CONNECT_TIMEOUT}
+    read-timeout: ${RULES_SERVICE_READ_TIMEOUT}
+    block-timeout: ${RULES_SERVICE_BLOCK_TIMEOUT}
 
 logging:
   level:
