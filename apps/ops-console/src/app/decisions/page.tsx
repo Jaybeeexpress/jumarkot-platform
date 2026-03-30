@@ -8,8 +8,10 @@ import { useMutation } from '@tanstack/react-query';
 import { Nav } from '@/components/layout/Nav';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
+import { SuccessAlert } from '@/components/ui/SuccessAlert';
 import { submitDecision } from '@/lib/api/decisions';
 import { toUserFacingApiError } from '@/lib/api/errors';
+import { isSuccessfulResponse } from '@/lib/api/response';
 import type { DecisionResponse } from '@/types';
 
 const schema = z.object({
@@ -22,6 +24,7 @@ type FormData = z.infer<typeof schema>;
 
 export default function DecisionsPage() {
   const [result, setResult] = useState<DecisionResponse | null>(null);
+  const [lastDecisionId, setLastDecisionId] = useState<string | null>(null);
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -51,7 +54,16 @@ export default function DecisionsPage() {
         payload:    parsedPayload,
       });
     },
-    onSuccess: (res) => { if (res.success) setResult(res.data); },
+    onMutate: () => {
+      setResult(null);
+      setLastDecisionId(null);
+    },
+    onSuccess: (res) => {
+      if (isSuccessfulResponse(res)) {
+        setResult(res.data);
+        setLastDecisionId(res.data.decisionId);
+      }
+    },
   });
 
   const mutationMessage = mutation.error
@@ -110,9 +122,18 @@ export default function DecisionsPage() {
           </form>
 
           {/* ── Result panel ── */}
-          {result ? (
+          {mutation.isPending ? (
+            <div className="flex items-center justify-center rounded-lg border border-dashed bg-white p-12 text-sm text-slate-500">
+              Evaluating request with live backend services...
+            </div>
+          ) : result ? (
             <div className="rounded-lg border bg-white p-6 shadow-sm">
               <h2 className="mb-4 text-base font-medium text-slate-900">Result</h2>
+              {lastDecisionId && (
+                <div className="mb-4">
+                  <SuccessAlert message={`Evaluation completed. Decision ID: ${lastDecisionId}`} />
+                </div>
+              )}
               <dl className="space-y-3 text-sm">
                 <Row label="Decision"><StatusBadge value={result.decision} /></Row>
                 <Row label="Risk Level"><StatusBadge value={result.riskLevel} /></Row>

@@ -5,7 +5,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Nav } from '@/components/layout/Nav';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
+import { SuccessAlert } from '@/components/ui/SuccessAlert';
 import { toUserFacingApiError } from '@/lib/api/errors';
+import { isSuccessfulResponse } from '@/lib/api/response';
 import { listRules, updateRuleStatus } from '@/lib/api/rules';
 import type { RuleDto } from '@/types';
 
@@ -14,6 +16,7 @@ export default function RulesPage() {
   const [envInput, setEnvInput]         = useState('PRODUCTION');
   const [activeFilter, setActiveFilter] = useState({ tenantId: '', envType: '' });
   const canLoadRules = tenantInput.trim().length > 0;
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['rules', activeFilter.tenantId, activeFilter.envType],
@@ -29,10 +32,15 @@ export default function RulesPage() {
         rule.tenantId,
         rule.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
       ),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['rules'] }),
+    onSuccess: (_data, { rule }) => {
+      setSuccessMessage(
+        `Rule \"${rule.name}\" ${rule.status === 'ACTIVE' ? 'deactivated' : 'activated'} successfully.`,
+      );
+      qc.invalidateQueries({ queryKey: ['rules'] });
+    },
   });
 
-  const rules: RuleDto[] = data?.success ? (data.data as RuleDto[]) : [];
+  const rules: RuleDto[] = isSuccessfulResponse(data) ? data.data : [];
   const listErrorMessage = error
     ? toUserFacingApiError(error, 'Failed to load rules.')
     : null;
@@ -70,7 +78,10 @@ export default function RulesPage() {
           </div>
           <button
             onClick={() =>
-              setActiveFilter({ tenantId: tenantInput.trim(), envType: envInput })
+              {
+                setSuccessMessage(null);
+                setActiveFilter({ tenantId: tenantInput.trim(), envType: envInput });
+              }
             }
             disabled={!canLoadRules}
             className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
@@ -87,6 +98,7 @@ export default function RulesPage() {
 
         {listErrorMessage && <ErrorAlert message={listErrorMessage} />}
         {toggleErrorMessage && <ErrorAlert message={toggleErrorMessage} />}
+  {successMessage && <SuccessAlert message={successMessage} />}
         {isLoading && <p className="text-sm text-slate-500">Loading rules…</p>}
         {!isLoading && activeFilter.tenantId && rules.length === 0 && !error && (
           <p className="text-sm text-slate-500">No active rules found for this tenant / environment.</p>
