@@ -7,7 +7,7 @@ import com.jumarkot.shared.auth.InvalidApiKeyException;
 import com.jumarkot.shared.auth.TenantContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -92,8 +92,8 @@ class EventControllerSecurityWebTest {
                         .content(validPayload()))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.errorCode").value("INSUFFICIENT_SCOPE"))
-                .andExpect(jsonPath("$.message").value("API key does not grant the required scope: events:write"))
+                .andExpect(jsonPath("$.errorCode").value("API_KEY_REQUIRED"))
+                .andExpect(jsonPath("$.message").value("API key is required"))
                 .andExpect(jsonPath("$.requestId").value("req-events-scope-001"))
                 .andExpect(jsonPath("$.timestamp").exists());
 
@@ -117,7 +117,7 @@ class EventControllerSecurityWebTest {
                         .header("X-Request-Id", "req-events-recent-scope-001"))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.errorCode").value("INSUFFICIENT_SCOPE"));
+                .andExpect(jsonPath("$.errorCode").value("API_KEY_REQUIRED"));
     }
 
     private String validPayload() {

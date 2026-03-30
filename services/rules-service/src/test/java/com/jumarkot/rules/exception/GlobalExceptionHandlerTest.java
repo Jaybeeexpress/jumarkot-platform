@@ -40,7 +40,20 @@ class GlobalExceptionHandlerTest {
     void missingRequiredFields_returns400_withValidationErrorAndFieldErrors() throws Exception {
         mockMvc.perform(post("/v1/rules")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
+                                                .content("""
+                                                                {
+                                                                    \"tenantId\": \"11111111-1111-1111-1111-111111111111\",
+                                                                    \"environmentType\": \"SANDBOX\",
+                                                                    \"name\": \"\",
+                                                                    \"category\": \"RISK\",
+                                                                    \"priority\": 10,
+                                                                    \"conditions\": [],
+                                                                    \"conditionLogic\": \"AND\",
+                                                                    \"action\": \"ALLOW\",
+                                                                    \"scoreAdjustment\": 5,
+                                                                    \"reasonCode\": \"R1\"
+                                                                }
+                                                                """))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
