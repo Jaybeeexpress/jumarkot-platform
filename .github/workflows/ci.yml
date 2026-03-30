@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, develop, stage-1]
+    branches: [main, develop, stage-1, stage-2]
   pull_request:
-    branches: [main, develop]
+    branches: [main, develop, stage-2]
 
 jobs:
   build-java:
@@ -107,9 +107,17 @@ jobs:
             apps/ops-console/package-lock.json
             apps/developer-portal/package-lock.json
 
-      - name: Install & build ops-console
+      - name: Install ops-console dependencies
         working-directory: apps/ops-console
-        run: npm ci && npm run build
+        run: npm ci
+
+      - name: Run ops-console coverage gate
+        working-directory: apps/ops-console
+        run: npm run test:coverage
+
+      - name: Build ops-console
+        working-directory: apps/ops-console
+        run: npm run build
 
       - name: Install & build developer-portal
         working-directory: apps/developer-portal
