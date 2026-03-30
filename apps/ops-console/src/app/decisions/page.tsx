@@ -77,19 +77,18 @@ export default function DecisionsPage() {
     ? toUserFacingApiError(mutation.error, 'Evaluation failed. Please try again.')
     : null;
 
-  const inputCls =
-    'mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm transition focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-200';
+  const inputCls = 'field-control mt-1.5 text-sm';
 
   return (
     <div className="soft-grid min-h-screen">
       <Nav />
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 pb-10 pt-6 md:px-6">
-        <section className="animate-rise rounded-2xl border border-teal-100/80 bg-gradient-to-r from-slate-900 via-cyan-900 to-teal-800 px-6 py-7 text-cyan-50 shadow-2xl shadow-cyan-900/30 md:px-8">
+        <section className="animate-rise interactive-card rounded-2xl border border-teal-100/80 bg-gradient-to-r from-slate-900 via-cyan-900 to-teal-800 px-6 py-7 text-cyan-50 shadow-2xl shadow-cyan-900/30 md:px-8">
           <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em]">
             <Sparkles className="h-3.5 w-3.5" />
             Decision Engine
           </p>
-          <h1 className="font-heading text-3xl font-semibold leading-tight md:text-4xl">Risk Decision Evaluator</h1>
+          <h1 className="font-heading display-gradient text-3xl font-semibold md:text-4xl">Risk Decision Evaluator</h1>
           <p className="mt-2 max-w-3xl text-sm text-cyan-100/90 md:text-base">
             Simulate live risk evaluations, inspect matched rule impact, and validate automated actions in real time.
           </p>
@@ -98,7 +97,7 @@ export default function DecisionsPage() {
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <form
             onSubmit={handleSubmit((d) => mutation.mutate(d))}
-            className="glass-card animate-fade-delayed space-y-4 rounded-2xl p-5 md:p-6"
+            className="glass-card interactive-card animate-fade-delayed space-y-4 rounded-2xl p-5 md:p-6"
           >
             <div className="mb-1 flex items-center gap-2 text-sm font-semibold text-cyan-900">
               <ShieldCheck className="h-4 w-4" />
@@ -127,7 +126,7 @@ export default function DecisionsPage() {
               <textarea
                 {...register('payload')}
                 rows={7}
-                className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 font-mono text-xs text-slate-700 shadow-sm transition focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-200"
+                className="field-control mt-1.5 font-mono text-xs"
               />
             </div>
 
@@ -136,18 +135,18 @@ export default function DecisionsPage() {
             <button
               type="submit"
               disabled={mutation.isPending}
-              className="flex h-11 w-full items-center justify-center rounded-xl bg-cyan-900 px-4 text-sm font-semibold text-cyan-50 shadow-lg shadow-cyan-900/20 transition hover:bg-cyan-800 disabled:opacity-50"
+              className="btn-glow flex h-11 w-full items-center justify-center rounded-2xl px-4 text-sm font-semibold text-cyan-50 shadow-lg shadow-cyan-900/20 transition hover:-translate-y-0.5 disabled:opacity-50"
             >
               {mutation.isPending ? 'Evaluating...' : 'Evaluate Decision'}
             </button>
           </form>
 
           {mutation.isPending ? (
-            <section className="glass-card flex animate-fade-delayed items-center justify-center rounded-2xl p-10 text-center text-sm text-slate-500">
+            <section className="glass-card interactive-card flex animate-fade-delayed items-center justify-center rounded-2xl p-10 text-center text-sm text-slate-500">
               Evaluating request with live backend services...
             </section>
           ) : result ? (
-            <section className="glass-card animate-fade-delayed rounded-2xl p-5 md:p-6">
+            <section className="glass-card interactive-card animate-fade-delayed rounded-2xl p-5 md:p-6">
               <h2 className="font-heading mb-4 text-xl font-semibold text-slate-900">Evaluation Result</h2>
 
               {lastDecisionId && (
@@ -175,7 +174,7 @@ export default function DecisionsPage() {
                     {result.matchedRules.map((r) => (
                       <div
                         key={r.ruleId}
-                        className="flex items-center justify-between rounded-xl border border-slate-200/70 bg-white/90 px-3 py-2 text-xs"
+                        className="flex items-center justify-between rounded-2xl border border-slate-200/70 bg-white/90 px-3 py-2 text-xs transition hover:-translate-y-0.5 hover:border-cyan-300/60 hover:shadow-md hover:shadow-cyan-900/10"
                       >
                         <span className="font-semibold text-slate-800">{r.ruleName}</span>
                         <span className="text-slate-500">+{r.scoreContribution} pts · {r.reasonCode}</span>
@@ -186,7 +185,7 @@ export default function DecisionsPage() {
               )}
             </section>
           ) : (
-            <section className="glass-card flex animate-fade-delayed items-center justify-center rounded-2xl border-dashed p-10 text-center text-sm text-slate-500">
+            <section className="glass-card interactive-card flex animate-fade-delayed items-center justify-center rounded-2xl border-dashed p-10 text-center text-sm text-slate-500">
               <div>
                 <CheckCircle2 className="mx-auto mb-3 h-6 w-6 text-cyan-700" />
                 Result details will appear here after evaluation.

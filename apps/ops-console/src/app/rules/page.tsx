@@ -51,14 +51,14 @@ export default function RulesPage() {
     <div className="soft-grid min-h-screen">
       <Nav />
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 pb-10 pt-6 md:px-6">
-        <section className="animate-rise rounded-2xl border border-cyan-100/80 bg-gradient-to-r from-cyan-900 via-sky-900 to-teal-800 px-6 py-7 text-cyan-50 shadow-2xl shadow-cyan-900/30 md:px-8">
+        <section className="animate-rise interactive-card rounded-2xl border border-cyan-100/80 bg-gradient-to-r from-cyan-900 via-sky-900 to-teal-800 px-6 py-7 text-cyan-50 shadow-2xl shadow-cyan-900/30 md:px-8">
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em]">
                 <Sparkles className="h-3.5 w-3.5" />
                 Rule Workspace
               </p>
-              <h1 className="font-heading text-3xl font-semibold leading-tight md:text-4xl">Rules Control Center</h1>
+              <h1 className="font-heading display-gradient text-3xl font-semibold md:text-4xl">Rules Control Center</h1>
               <p className="mt-2 max-w-2xl text-sm text-cyan-100/90 md:text-base">
                 Load tenant-specific rules, review scoring behavior, and toggle policy status in a single operational view.
               </p>
@@ -70,7 +70,7 @@ export default function RulesPage() {
           </div>
         </section>
 
-        <section className="glass-card animate-fade-delayed rounded-2xl p-5 md:p-6">
+        <section className="glass-card interactive-card animate-fade-delayed rounded-2xl p-5 md:p-6">
           <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-cyan-900">
             <Layers3 className="h-4 w-4" />
             Filter Rules
@@ -85,7 +85,7 @@ export default function RulesPage() {
                 value={tenantInput}
                 onChange={(e) => setTenantInput(e.target.value)}
                 placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm transition focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-200"
+                className="field-control mt-1.5 text-sm"
               />
             </div>
             <div>
@@ -96,7 +96,7 @@ export default function RulesPage() {
                 id="rules-environment"
                 value={envInput}
                 onChange={(e) => setEnvInput(e.target.value)}
-                className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm transition focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-200"
+                className="field-control mt-1.5 text-sm"
               >
                 <option value="PRODUCTION">PRODUCTION</option>
                 <option value="SANDBOX">SANDBOX</option>
@@ -108,7 +108,7 @@ export default function RulesPage() {
                 setActiveFilter({ tenantId: tenantInput.trim(), envType: envInput });
               }}
               disabled={!canLoadRules}
-              className="h-11 rounded-xl bg-cyan-900 px-5 text-sm font-semibold text-cyan-50 shadow-lg shadow-cyan-900/20 transition hover:bg-cyan-800 disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn-glow h-11 rounded-2xl px-5 text-sm font-semibold text-cyan-50 shadow-lg shadow-cyan-900/20 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Load Rules
             </button>
@@ -120,23 +120,23 @@ export default function RulesPage() {
         {successMessage && <SuccessAlert message={successMessage} />}
 
         {!activeFilter.tenantId && (
-          <section className="glass-card rounded-2xl border-dashed p-8 text-center text-sm text-slate-500">
+          <section className="glass-card interactive-card rounded-2xl border-dashed p-8 text-center text-sm text-slate-500">
             Enter a tenant ID and choose an environment to fetch active rules.
           </section>
         )}
 
         {isLoading && (
-          <section className="glass-card rounded-2xl p-8 text-center text-sm text-slate-500">Loading rules...</section>
+          <section className="glass-card interactive-card rounded-2xl p-8 text-center text-sm text-slate-500">Loading rules...</section>
         )}
 
         {!isLoading && activeFilter.tenantId && rules.length === 0 && !error && (
-          <section className="glass-card rounded-2xl border-dashed p-8 text-center text-sm text-slate-500">
+          <section className="glass-card interactive-card rounded-2xl border-dashed p-8 text-center text-sm text-slate-500">
             No active rules found for this tenant and environment.
           </section>
         )}
 
         {rules.length > 0 && (
-          <section className="glass-card overflow-hidden rounded-2xl">
+          <section className="glass-card interactive-card overflow-hidden rounded-2xl">
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead className="bg-slate-100/70 text-left text-[11px] uppercase tracking-[0.1em] text-slate-600">
@@ -159,7 +159,7 @@ export default function RulesPage() {
                         <button
                           onClick={() => toggleStatus.mutate({ rule })}
                           disabled={toggleStatus.isPending}
-                          className="rounded-lg border border-cyan-200 bg-white px-3 py-1.5 text-xs font-semibold text-cyan-800 transition hover:border-cyan-300 hover:bg-cyan-50 disabled:opacity-50"
+                          className="rounded-2xl border border-cyan-200 bg-white px-3 py-1.5 text-xs font-semibold text-cyan-800 transition hover:-translate-y-0.5 hover:border-cyan-300 hover:bg-cyan-50 hover:shadow-md hover:shadow-cyan-900/10 disabled:opacity-50"
                         >
                           {rule.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
                         </button>

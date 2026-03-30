@@ -20,7 +20,7 @@ export function Nav() {
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="font-heading text-lg font-bold tracking-tight text-cyan-950 transition hover:text-cyan-700"
+            className="font-heading text-lg font-extrabold tracking-tight text-cyan-950 transition hover:-translate-y-0.5 hover:text-cyan-700"
           >
             Jumarkot
           </Link>
@@ -34,10 +34,10 @@ export function Nav() {
               key={l.href}
               href={l.href}
               className={clsx(
-                'rounded-full px-3 py-1.5 transition-all',
+                'nav-pill rounded-full px-3 py-1.5 transition-all',
                 pathname?.startsWith(l.href)
                   ? 'bg-cyan-900 text-cyan-50 shadow-sm shadow-cyan-900/20'
-                  : 'hover:bg-white hover:text-cyan-900',
+                  : 'hover:-translate-y-0.5 hover:bg-white hover:text-cyan-900 hover:shadow-md hover:shadow-cyan-900/10',
               )}
             >
               {l.label}
