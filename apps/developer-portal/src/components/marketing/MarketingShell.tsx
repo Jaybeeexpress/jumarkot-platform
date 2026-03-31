@@ -20,7 +20,7 @@ type MarketingShellProps = {
 
 const footerLinks = ['Privacy Policy', 'Terms of Service', 'Contact'];
 
-export function MarketingShell({ children, navItems, ctaHref = '#access', ctaLabel = 'Enter Platform' }: MarketingShellProps) {
+export function MarketingShell({ children, navItems, ctaHref = '/signin', ctaLabel = 'Enter Platform' }: MarketingShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
