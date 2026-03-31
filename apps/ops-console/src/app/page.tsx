@@ -71,7 +71,7 @@ export default function DashboardPage() {
               <p className="text-[12px] text-secondary">Centralized view of alerts, decision trends, and analyst queue performance.</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 text-[12px] text-muted">
+          <div className="flex flex-wrap items-center gap-3 text-[12px] text-muted">
             <span className="enterprise-chip enterprise-chip-info">Active Window: 24h</span>
             <button type="button" className="enterprise-button enterprise-button-secondary h-8 gap-1 px-3 text-[12px]">
               Open full timeline
@@ -88,7 +88,7 @@ export default function DashboardPage() {
 
         <div className="app-grid">
           <section className="enterprise-card-dense row-span-8 min-h-[420px]">
-            <div className="mb-5 flex items-center justify-between">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div className="enterprise-label">Decision Trend</div>
                 <h3 className="mt-1">Daily Review Pressure</h3>
@@ -99,7 +99,7 @@ export default function DashboardPage() {
           </section>
 
           <section className="enterprise-card-dense row-span-4 min-h-[420px]">
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div className="enterprise-label">Queue Summary</div>
                 <h3 className="mt-1">Analyst Throughput</h3>
@@ -125,7 +125,7 @@ export default function DashboardPage() {
 
         <div className="app-grid">
           <section className="enterprise-card-dense row-span-8 min-h-[360px]">
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div className="enterprise-label">Recent Alerts</div>
                 <h3 className="mt-1">Analyst Queue</h3>
@@ -136,7 +136,7 @@ export default function DashboardPage() {
           </section>
 
           <section className="enterprise-card-dense row-span-4 min-h-[360px]">
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div className="enterprise-label">Case Activity</div>
                 <h3 className="mt-1">Latest Investigator Actions</h3>

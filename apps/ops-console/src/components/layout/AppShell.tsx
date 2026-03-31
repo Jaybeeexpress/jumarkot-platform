@@ -17,7 +17,6 @@ import {
   GanttChartSquare,
   LayoutDashboard,
   Scale,
-  Search,
   Settings,
   ShieldAlert,
   ShieldCheck,
@@ -107,8 +106,8 @@ export function AppShell({ title, breadcrumb, subtitle, children, rightPanel }: 
       <aside className={clsx('enterprise-sidebar', collapsed ? 'enterprise-sidebar-collapsed' : 'enterprise-sidebar-expanded')}>
         <div className="enterprise-sidebar-brand">
           <div className={clsx('overflow-hidden', collapsed && 'hidden')}>
-            <div className="text-[18px] font-semibold leading-none text-primary">Jumarkot</div>
-            <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Ops Console</div>
+            <div className="enterprise-brand-title">Jumarkot</div>
+            <div className="enterprise-brand-subtitle">Ops Console</div>
           </div>
           <div className={clsx('mt-3 flex', collapsed ? 'justify-center' : 'justify-end')}>
             <button
@@ -143,9 +142,9 @@ export function AppShell({ title, breadcrumb, subtitle, children, rightPanel }: 
                         key={item.href}
                         href={item.href}
                         className={clsx(
-                          'flex h-10 items-center gap-[10px] rounded-[10px] border-l-[3px] px-3 text-[14px] font-medium transition-all duration-150 ease-in',
+                          'enterprise-nav-item flex h-10 items-center gap-[10px] rounded-[10px] border-l-[3px] px-3 text-[14px] font-medium transition-all duration-150 ease-in',
                           active
-                            ? 'border-l-[var(--brand-primary)] bg-panel text-primary font-semibold shadow-[0_0_0_1px_#1F2937,0_8px_24px_rgba(0,0,0,0.18)]'
+                            ? 'enterprise-nav-item-active border-l-[var(--brand-primary)] bg-panel text-primary font-semibold shadow-[0_0_0_1px_#1F2937,0_8px_24px_rgba(0,0,0,0.18)]'
                             : 'border-l-transparent text-secondary hover:bg-[#1E293B] hover:text-primary',
                           !collapsed && isSidebarAnimating && sequenceIndex < totalNavItems && 'enterprise-nav-reveal',
                           !collapsed && isSidebarAnimating && delayClass,
@@ -166,38 +165,39 @@ export function AppShell({ title, breadcrumb, subtitle, children, rightPanel }: 
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="enterprise-topbar enterprise-topbar-sticky flex items-center">
-          <div className="content-max flex h-full items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
+          <div className="content-max enterprise-controlbar flex h-full items-center justify-between gap-4">
+            <div className="enterprise-controlbar-left flex min-w-0 items-center gap-3">
               <span className="enterprise-chip enterprise-chip-success">Production</span>
-              <button type="button" className="enterprise-button enterprise-button-secondary h-9 gap-2 px-3">
+              <button type="button" className="enterprise-button enterprise-button-secondary enterprise-control-pill h-9 gap-2 px-3">
                 <CalendarDays className="h-3.5 w-3.5" />
-                Last 24 Hours
+                <span className="hidden sm:inline">Last 24 Hours</span>
+                <span className="sm:hidden">24h</span>
                 <ChevronDown className="h-3.5 w-3.5" />
               </button>
-              <span className="enterprise-chip enterprise-chip-neutral">
+              <span className="enterprise-chip enterprise-chip-neutral hidden md:inline-flex">
                 <RefreshCcw className="h-3.5 w-3.5" />
                 Synced 38s ago
               </span>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="enterprise-controlbar-right flex items-center">
               <button
                 type="button"
-                className="h-10 items-center gap-2 rounded-[10px] border border-[rgba(99,102,241,0.4)] bg-[var(--brand-primary)] px-3 text-[12px] font-semibold text-white transition-all duration-150 ease-in hover:bg-[var(--brand-hover)] inline-flex"
+                className="enterprise-create-case-btn inline-flex h-10 items-center gap-2 rounded-[10px] border border-[rgba(99,102,241,0.4)] bg-[var(--brand-primary)] px-3 text-[12px] font-semibold text-white transition-all duration-150 ease-in hover:bg-[var(--brand-hover)]"
               >
                 <FilePlus2 className="h-3.5 w-3.5" />
-                Create Case
+                <span className="hidden sm:inline">Create Case</span>
               </button>
               <button
                 type="button"
-                className="enterprise-button enterprise-button-secondary h-10 w-10 px-0"
+                className="enterprise-button enterprise-button-secondary enterprise-icon-action-btn h-10 w-10 px-0"
                 aria-label="Notifications"
               >
                 <Bell className="h-4 w-4" />
               </button>
               <button
                 type="button"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-light bg-panel text-secondary transition-all duration-150 ease-in hover:bg-[#243245] hover:text-primary"
+                className="enterprise-avatar-action-btn flex h-10 w-10 items-center justify-center rounded-full border border-light bg-panel text-secondary transition-all duration-150 ease-in hover:bg-[#243245] hover:text-primary"
                 aria-label="Profile"
               >
                 <UserCircle2 className="h-5 w-5" />
@@ -207,10 +207,9 @@ export function AppShell({ title, breadcrumb, subtitle, children, rightPanel }: 
         </header>
 
         <div className="flex-1 overflow-auto">
-          <div className="content-max pb-6 pt-4">
+          <div className="content-max pb-6 pt-[10px]">
             <div className="mb-4">
-              <label className="relative block w-full">
-                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+              <label className="enterprise-search-wrap relative block w-full">
                 <input
                   className="enterprise-input enterprise-search-input"
                   placeholder="Search alerts, cases, entities..."
