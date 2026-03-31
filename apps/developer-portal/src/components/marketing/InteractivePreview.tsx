@@ -206,7 +206,7 @@ export function InteractivePreview() {
                   <div key={index} className="flex flex-1 flex-col items-center gap-2">
                     <div
                       className={`w-full rounded-t-[10px] transition-all duration-150 ease-in ${index >= 9 ? 'bg-[var(--landing-accent)]' : 'bg-[rgba(56,189,248,0.75)]'}`}
-                      style={{ height }}
+                      style={{ height: `${height}px` }}
                     />
                     <span className="text-[11px] font-medium text-landing-faint">W{index + 1}</span>
                   </div>
