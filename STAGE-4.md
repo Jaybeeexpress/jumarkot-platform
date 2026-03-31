@@ -12,7 +12,7 @@ This file is the working contract for Stage-4 delivery.
 
 ## Delivery Checklist
 
-- [ ] Rebuild shared design tokens
+- [x] Rebuild shared design tokens
 - [ ] Create enterprise app shell
 - [ ] Implement ops console pages
 - [ ] Implement developer portal pages
@@ -20,12 +20,13 @@ This file is the working contract for Stage-4 delivery.
 
 ## Quality Gates
 
-- [ ] Frontend typecheck passes for ops-console
-- [ ] Frontend typecheck passes for developer-portal
+- [x] Frontend typecheck passes for ops-console
+- [x] Frontend typecheck passes for developer-portal
 - [ ] Relevant tests pass
 - [ ] Visual regression check completed on key screens
 - [ ] Changes committed and pushed
 
 ## Notes
 
+- Shared tokens extracted to packages/design-tokens/src/tokens.css and imported by both frontend apps.
 - Use this file to track concrete Stage-4 deliverables and acceptance evidence as work lands.

@@ -1,28 +1,30 @@
+@import '../../../../packages/design-tokens/src/tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --page-bg: #0b1220;
-    --shell-bg: #0f172a;
-    --card-bg: #111827;
-    --panel-bg: #1f2937;
+    --page-bg: var(--jk-slate-925);
+    --shell-bg: var(--jk-slate-900);
+    --card-bg: var(--jk-slate-850);
+    --panel-bg: var(--jk-slate-800);
     --hover-surface: #1e293b;
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-muted: #94a3b8;
-    --text-faint: #64748b;
-    --border-default: #1f2937;
-    --border-light: #334155;
-    --brand-primary: #6366f1;
-    --brand-hover: #4f46e5;
+    --text-primary: var(--jk-slate-50);
+    --text-secondary: var(--jk-slate-300);
+    --text-muted: var(--jk-slate-400);
+    --text-faint: var(--jk-slate-500);
+    --border-default: var(--jk-slate-800);
+    --border-light: var(--jk-slate-700);
+    --brand-primary: var(--jk-indigo-500);
+    --brand-hover: var(--jk-indigo-600);
     --brand-glow: rgba(99, 102, 241, 0.14);
-    --success: #22c55e;
-    --warning: #f59e0b;
-    --danger: #ef4444;
-    --info: #3b82f6;
-    --radius: 10px;
+    --success: var(--jk-green-500);
+    --warning: var(--jk-amber-500);
+    --danger: var(--jk-red-500);
+    --info: var(--jk-blue-500);
+    --radius: var(--jk-radius-10);
   }
 
   * {

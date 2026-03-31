@@ -1,39 +1,41 @@
+@import '../../../../packages/design-tokens/src/tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --page-bg: #0f172a;
-    --card-bg: #111827;
-    --panel-bg: #1f2937;
+    --page-bg: var(--jk-slate-900);
+    --card-bg: var(--jk-slate-850);
+    --panel-bg: var(--jk-slate-800);
     --text-primary: #f9fafb;
     --text-secondary: #9ca3af;
     --text-muted: #6b7280;
-    --border-default: #1f2937;
+    --border-default: var(--jk-slate-800);
     --border-light: #374151;
-    --brand-primary: #6366f1;
-    --brand-hover: #4f46e5;
-    --success: #22c55e;
-    --warning: #f59e0b;
-    --danger: #ef4444;
-    --info: #3b82f6;
-    --radius: 8px;
-    --landing-main-bg: #0a1020;
+    --brand-primary: var(--jk-indigo-500);
+    --brand-hover: var(--jk-indigo-600);
+    --success: var(--jk-green-500);
+    --warning: var(--jk-amber-500);
+    --danger: var(--jk-red-500);
+    --info: var(--jk-blue-500);
+    --radius: var(--jk-radius-8);
+    --landing-main-bg: var(--jk-slate-950);
     --landing-shell-bg: #11182b;
     --landing-left-bg: #1a2238;
     --landing-elevated: #2a3450;
     --landing-hover: #323e5d;
     --landing-border: #2b3550;
-    --landing-text-primary: #f8fafc;
-    --landing-text-secondary: #cbd5e1;
-    --landing-text-muted: #94a3b8;
-    --landing-text-faint: #64748b;
-    --landing-accent: #ff2d6f;
-    --landing-accent-hover: #e11d60;
+    --landing-text-primary: var(--jk-slate-50);
+    --landing-text-secondary: var(--jk-slate-300);
+    --landing-text-muted: var(--jk-slate-400);
+    --landing-text-faint: var(--jk-slate-500);
+    --landing-accent: var(--jk-pink-500);
+    --landing-accent-hover: var(--jk-pink-600);
     --landing-accent-glow: rgba(255, 45, 111, 0.18);
-    --landing-tech: #38bdf8;
-    --landing-live: #22c55e;
+    --landing-tech: var(--jk-sky-400);
+    --landing-live: var(--jk-green-500);
   }
 
   * {

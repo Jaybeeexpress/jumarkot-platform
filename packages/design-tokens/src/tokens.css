@@ -1,0 +1,60 @@
+@layer base {
+  :root {
+    /* Core neutral scale */
+    --jk-slate-950: #0a1020;
+    --jk-slate-925: #0b1220;
+    --jk-slate-900: #0f172a;
+    --jk-slate-850: #111827;
+    --jk-slate-800: #1f2937;
+    --jk-slate-700: #334155;
+    --jk-slate-600: #475569;
+    --jk-slate-500: #64748b;
+    --jk-slate-400: #94a3b8;
+    --jk-slate-300: #cbd5e1;
+    --jk-slate-100: #f1f5f9;
+    --jk-slate-50: #f8fafc;
+
+    /* Shared brand and semantic colors */
+    --jk-indigo-500: #6366f1;
+    --jk-indigo-600: #4f46e5;
+    --jk-pink-500: #ff2d6f;
+    --jk-pink-600: #e11d60;
+    --jk-sky-400: #38bdf8;
+    --jk-green-500: #22c55e;
+    --jk-amber-500: #f59e0b;
+    --jk-red-500: #ef4444;
+    --jk-blue-500: #3b82f6;
+
+    /* Shared sizing and motion */
+    --jk-radius-8: 8px;
+    --jk-radius-10: 10px;
+    --jk-radius-12: 12px;
+    --jk-duration-fast: 150ms;
+    --jk-ease-standard: ease;
+
+    /* Shared shadows */
+    --jk-shadow-card: 0 20px 40px rgba(0, 0, 0, 0.25);
+    --jk-shadow-soft: 0 12px 28px rgba(0, 0, 0, 0.12);
+
+    /* Tailwind HSL tokens used by border-border/bg/fg classes */
+    --border: 217 19% 27%;
+    --input: 217 19% 27%;
+    --ring: 239 84% 67%;
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    --primary: 239 84% 67%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+  }
+}
