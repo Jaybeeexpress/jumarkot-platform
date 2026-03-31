@@ -7,7 +7,7 @@ const navItems = [
   { label: 'Pricing', href: '/pricing' },
   { label: 'Developers', href: '/developers' },
   { label: 'Resources', href: '/resources' },
-  { label: 'Sign In', href: '/#access' },
+  { label: 'Sign In', href: '/signin' },
 ];
 
 const solutions = [
@@ -30,7 +30,7 @@ const solutions = [
 
 export default function SolutionsPage() {
   return (
-    <MarketingShell navItems={navItems} ctaHref="/#access" ctaLabel="Sign In">
+    <MarketingShell navItems={navItems} ctaHref="/signin" ctaLabel="Sign In">
       <section className="landing-container py-14">
         <div className="landing-surface bg-[rgba(17,24,43,0.84)] p-8 lg:p-10">
           <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Solutions</div>
@@ -44,7 +44,7 @@ export default function SolutionsPage() {
           {solutions.map((solution) => {
             const Icon = solution.icon;
             return (
-              <article key={solution.title} className="landing-surface bg-[rgba(17,24,43,0.82)] p-7 transition-all duration-150 ease-in hover:bg-[rgba(26,34,56,0.96)]">
+              <article key={solution.title} className="landing-surface landing-animated-card bg-[rgba(17,24,43,0.82)] p-7 transition-all duration-150 ease-in hover:bg-[rgba(26,34,56,0.96)]">
                 <div className="flex h-12 w-12 items-center justify-center rounded-[12px] bg-[rgba(56,189,248,0.12)] text-[var(--landing-tech)]">
                   <Icon className="h-5 w-5" />
                 </div>
@@ -54,6 +54,24 @@ export default function SolutionsPage() {
             );
           })}
         </div>
+      </section>
+
+      <section className="landing-container py-6">
+        <article className="landing-surface landing-animated-card bg-[rgba(17,24,43,0.82)] p-7">
+          <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Delivery Model</div>
+          <div className="mt-4 grid gap-4 md:grid-cols-3">
+            {[
+              ['Assess', 'Establish baseline signal quality, routing pressure, and current analyst load.'],
+              ['Roll Out', 'Deploy policies with sandbox verification before production promotion.'],
+              ['Operate', 'Monitor queue health, audit coverage, and webhook reliability continuously.'],
+            ].map(([title, text]) => (
+              <div key={title} className="rounded-[12px] border border-[var(--landing-border)] bg-[rgba(15,23,42,0.92)] p-4">
+                <div className="text-[15px] font-semibold text-landing-primary">{title}</div>
+                <div className="mt-2 text-[14px] leading-7 text-landing-secondary">{text}</div>
+              </div>
+            ))}
+          </div>
+        </article>
       </section>
     </MarketingShell>
   );

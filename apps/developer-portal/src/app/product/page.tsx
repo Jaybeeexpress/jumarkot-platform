@@ -8,7 +8,7 @@ const navItems = [
   { label: 'Pricing', href: '/pricing' },
   { label: 'Developers', href: '/developers' },
   { label: 'Resources', href: '/resources' },
-  { label: 'Sign In', href: '/#access' },
+  { label: 'Sign In', href: '/signin' },
 ];
 
 const pillars = [
@@ -40,7 +40,7 @@ const useCases = [
 
 export default function ProductPage() {
   return (
-    <MarketingShell navItems={navItems} ctaHref="/#access" ctaLabel="Sign In">
+    <MarketingShell navItems={navItems} ctaHref="/signin" ctaLabel="Sign In">
       <section className="landing-container py-14">
         <div className="landing-surface bg-[rgba(17,24,43,0.84)] p-8 lg:p-10">
           <div className="max-w-[880px]">
@@ -58,7 +58,7 @@ export default function ProductPage() {
           {pillars.map((pillar) => {
             const Icon = pillar.icon;
             return (
-              <article key={pillar.title} className="landing-surface bg-[rgba(17,24,43,0.82)] p-6 transition-all duration-150 ease-in hover:bg-[rgba(26,34,56,0.96)]">
+              <article key={pillar.title} className="landing-surface landing-animated-card bg-[rgba(17,24,43,0.82)] p-6 transition-all duration-150 ease-in hover:bg-[rgba(26,34,56,0.96)]">
                 <div className="flex h-12 w-12 items-center justify-center rounded-[12px] bg-[rgba(255,45,111,0.12)] text-[var(--landing-accent)]">
                   <Icon className="h-5 w-5" />
                 </div>
@@ -73,7 +73,7 @@ export default function ProductPage() {
 
       <section className="landing-container py-10">
         <div className="grid gap-5 xl:grid-cols-[1.25fr_0.75fr]">
-          <article className="landing-surface bg-[rgba(17,24,43,0.82)] p-8">
+          <article className="landing-surface landing-animated-card bg-[rgba(17,24,43,0.82)] p-8">
             <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Platform Narrative</div>
             <h2 className="mt-3 text-[28px] font-semibold text-landing-primary">See how signals become actions, cases, and accountable outcomes.</h2>
             <div className="mt-6 grid gap-4 md:grid-cols-3">
@@ -90,7 +90,7 @@ export default function ProductPage() {
             </div>
           </article>
 
-          <article className="landing-surface bg-[rgba(17,24,43,0.82)] p-8">
+          <article className="landing-surface landing-animated-card bg-[rgba(17,24,43,0.82)] p-8">
             <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Core Use Cases</div>
             <div className="mt-5 space-y-4">
               {useCases.map((useCase) => {
@@ -107,6 +107,22 @@ export default function ProductPage() {
               Explore Solutions
             </Link>
           </article>
+        </div>
+      </section>
+
+      <section className="landing-container py-6">
+        <div className="grid gap-5 xl:grid-cols-3">
+          {[
+            ['Visibility', 'Track route confidence and analyst pressure before queues overflow.'],
+            ['Control', 'Adjust policies with clear blast-radius understanding and environment context.'],
+            ['Trust', 'Maintain explainable decisions for internal teams and external auditors.'],
+          ].map(([title, text]) => (
+            <article key={title} className="landing-surface landing-animated-card bg-[rgba(17,24,43,0.82)] p-6">
+              <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Capability</div>
+              <h3 className="mt-3 text-[22px] font-semibold text-landing-primary">{title}</h3>
+              <p className="mt-3 text-[16px] leading-8 text-landing-secondary">{text}</p>
+            </article>
+          ))}
         </div>
       </section>
     </MarketingShell>

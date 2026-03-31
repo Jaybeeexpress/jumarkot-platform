@@ -1,7 +1,10 @@
+"use client";
+
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import type { Route } from 'next';
-import { Github, Gitlab, GitBranch, Settings2 } from 'lucide-react';
+import { Github, Gitlab, GitBranch, Menu, Settings2, X } from 'lucide-react';
 
 type NavItem = {
   label: string;
@@ -18,6 +21,8 @@ type MarketingShellProps = {
 const footerLinks = ['Privacy Policy', 'Terms of Service', 'Contact'];
 
 export function MarketingShell({ children, navItems, ctaHref = '#access', ctaLabel = 'Enter Platform' }: MarketingShellProps) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   return (
     <div className="landing-page">
       <header className="landing-nav">
@@ -35,14 +40,48 @@ export function MarketingShell({ children, navItems, ctaHref = '#access', ctaLab
           </nav>
 
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              className="landing-settings-button lg:hidden"
+              aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'}
+              onClick={() => setMobileOpen((value) => !value)}
+            >
+              {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
             <button type="button" className="landing-settings-button" aria-label="Open settings">
               <Settings2 className="h-4 w-4" />
             </button>
-            <Link href={ctaHref} className="landing-secondary-button hidden h-10 px-4 md:inline-flex">
+            <Link href={ctaHref} className="landing-secondary-button hidden h-10 px-4 md:inline-flex" onClick={() => setMobileOpen(false)}>
               {ctaLabel}
             </Link>
           </div>
         </div>
+
+        {mobileOpen && (
+          <div className="landing-mobile-panel lg:hidden">
+            <div className="landing-container py-4">
+              <nav className="space-y-2">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className="landing-mobile-link"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
+              <Link
+                href={ctaHref}
+                className="landing-accent-button mt-4 inline-flex h-10 w-full"
+                onClick={() => setMobileOpen(false)}
+              >
+                {ctaLabel}
+              </Link>
+            </div>
+          </div>
+        )}
       </header>
 
       <main>{children}</main>

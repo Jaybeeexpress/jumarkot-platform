@@ -22,13 +22,13 @@ const navItems = [
   { label: 'Pricing', href: '/pricing' },
   { label: 'Developers', href: '/developers' },
   { label: 'Resources', href: '/resources' },
-  { label: 'Sign In', href: '#access' },
+  { label: 'Sign In', href: '/signin' },
 ];
 
 const providers = [
-  { label: 'Continue with GitHub', icon: Github },
-  { label: 'Continue with GitLab', icon: Gitlab },
-  { label: 'Continue with Bitbucket', icon: GitBranch },
+  { label: 'Continue with GitHub', icon: Github, href: '/signin?provider=github' },
+  { label: 'Continue with GitLab', icon: Gitlab, href: '/signin?provider=gitlab' },
+  { label: 'Continue with Bitbucket', icon: GitBranch, href: '/signin?provider=bitbucket' },
 ];
 
 const introCards = [
@@ -146,7 +146,7 @@ const footerLinks = ['Privacy Policy', 'Terms of Service', 'Contact'];
 
 export default function HomePage() {
   return (
-    <MarketingShell navItems={navItems} ctaHref="#access" ctaLabel="Enter Platform">
+    <MarketingShell navItems={navItems} ctaHref="/signin" ctaLabel="Sign In">
         <section className="landing-container grid min-h-[calc(100vh-72px)] gap-8 py-8 xl:grid-cols-[0.38fr_0.62fr] xl:py-0">
           <div id="access" className="flex py-4 xl:py-8">
             <div className="landing-surface flex min-h-full w-full flex-col bg-[#1A2238] px-10 py-12">
@@ -175,13 +175,13 @@ export default function HomePage() {
                       const Icon = provider.icon;
 
                       return (
-                        <button key={provider.label} type="button" className="landing-auth-button">
+                        <Link key={provider.label} href={provider.href} className="landing-auth-button">
                           <span className="flex items-center gap-3">
                             <Icon className="h-5 w-5 text-landing-secondary" />
                             <span className="text-[15px] font-semibold text-landing-primary">{provider.label}</span>
                           </span>
                           <ArrowRight className="h-4 w-4 text-landing-muted" />
-                        </button>
+                        </Link>
                       );
                     })}
                   </div>
@@ -322,7 +322,7 @@ export default function HomePage() {
                     </div>
                   ))}
                 </div>
-                <Link href={index === 1 ? '/pricing' : '#access'} className={`mt-8 inline-flex h-11 w-full items-center justify-center rounded-[12px] text-[15px] font-semibold ${index === 1 ? 'landing-accent-button' : 'landing-secondary-button'}`}>
+                <Link href={index === 1 ? '/pricing' : '/signin'} className={`mt-8 inline-flex h-11 w-full items-center justify-center rounded-[12px] text-[15px] font-semibold ${index === 1 ? 'landing-accent-button' : 'landing-secondary-button'}`}>
                   {index === 2 ? 'Talk To Sales' : 'Get Started'}
                 </Link>
               </article>
@@ -389,7 +389,7 @@ export default function HomePage() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Link href="#access" className="landing-accent-button h-11 px-5">
+              <Link href="/signin" className="landing-accent-button h-11 px-5">
                 Sign In
               </Link>
               <Link href="/api-keys" className="landing-secondary-button h-11 px-5">

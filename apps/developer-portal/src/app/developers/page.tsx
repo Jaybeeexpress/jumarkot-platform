@@ -8,7 +8,7 @@ const navItems = [
   { label: 'Pricing', href: '/pricing' },
   { label: 'Developers', href: '/developers' },
   { label: 'Resources', href: '/resources' },
-  { label: 'Sign In', href: '/#access' },
+  { label: 'Sign In', href: '/signin' },
 ];
 
 const links = [
@@ -19,7 +19,7 @@ const links = [
 
 export default function DevelopersPage() {
   return (
-    <MarketingShell navItems={navItems} ctaHref="/#access" ctaLabel="Sign In">
+    <MarketingShell navItems={navItems} ctaHref="/signin" ctaLabel="Sign In">
       <section className="landing-container py-14">
         <div className="landing-surface bg-[rgba(17,24,43,0.84)] p-8 lg:p-10">
           <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Developers</div>
@@ -31,7 +31,7 @@ export default function DevelopersPage() {
       <section className="landing-container py-4">
         <div className="grid gap-5 xl:grid-cols-3">
           {links.map(([title, text, cta, href, Icon]) => (
-            <article key={title} className="landing-surface bg-[rgba(17,24,43,0.82)] p-6 transition-all duration-150 ease-in hover:bg-[rgba(26,34,56,0.96)]">
+            <article key={title} className="landing-surface landing-animated-card bg-[rgba(17,24,43,0.82)] p-6 transition-all duration-150 ease-in hover:bg-[rgba(26,34,56,0.96)]">
               <div className="flex h-12 w-12 items-center justify-center rounded-[12px] bg-[rgba(56,189,248,0.12)] text-[var(--landing-tech)]">
                 <Icon className="h-5 w-5" />
               </div>
@@ -43,6 +43,28 @@ export default function DevelopersPage() {
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="landing-container py-6">
+        <article className="landing-surface landing-animated-card bg-[rgba(17,24,43,0.82)] p-7">
+          <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Implementation Sequence</div>
+          <div className="mt-4 grid gap-4 md:grid-cols-4">
+            {[
+              ['1', 'Generate API key'],
+              ['2', 'Route sample signals'],
+              ['3', 'Verify webhook delivery'],
+              ['4', 'Promote to production'],
+            ].map(([step, text]) => (
+              <div key={step} className="rounded-[12px] border border-[var(--landing-border)] bg-[rgba(15,23,42,0.92)] px-4 py-4">
+                <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Step {step}</div>
+                <div className="mt-2 text-[15px] font-semibold text-landing-primary">{text}</div>
+              </div>
+            ))}
+          </div>
+          <Link href="/signin" className="landing-accent-button mt-6 inline-flex h-11 px-5">
+            Start Onboarding
+          </Link>
+        </article>
       </section>
     </MarketingShell>
   );

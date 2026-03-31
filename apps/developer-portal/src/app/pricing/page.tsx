@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { CircleDollarSign } from 'lucide-react';
 import { MarketingShell } from '@/components/marketing/MarketingShell';
 
@@ -7,7 +8,7 @@ const navItems = [
   { label: 'Pricing', href: '/pricing' },
   { label: 'Developers', href: '/developers' },
   { label: 'Resources', href: '/resources' },
-  { label: 'Sign In', href: '/#access' },
+  { label: 'Sign In', href: '/signin' },
 ];
 
 const plans = [
@@ -33,7 +34,7 @@ const plans = [
 
 export default function PricingPage() {
   return (
-    <MarketingShell navItems={navItems} ctaHref="/#access" ctaLabel="Sign In">
+    <MarketingShell navItems={navItems} ctaHref="/signin" ctaLabel="Sign In">
       <section className="landing-container py-14">
         <div className="landing-surface bg-[rgba(17,24,43,0.84)] p-8 lg:p-10">
           <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Pricing</div>
@@ -45,7 +46,7 @@ export default function PricingPage() {
       <section className="landing-container py-4">
         <div className="grid gap-5 xl:grid-cols-3">
           {plans.map((plan, index) => (
-            <article key={plan.name} className={`landing-surface p-6 transition-all duration-150 ease-in hover:bg-[rgba(26,34,56,0.96)] ${index === 1 ? 'bg-[rgba(255,45,111,0.08)]' : 'bg-[rgba(17,24,43,0.82)]'}`}>
+            <article key={plan.name} className={`landing-surface landing-animated-card p-6 transition-all duration-150 ease-in hover:bg-[rgba(26,34,56,0.96)] ${index === 1 ? 'bg-[rgba(255,45,111,0.08)]' : 'bg-[rgba(17,24,43,0.82)]'}`}>
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">{plan.name}</div>
@@ -62,9 +63,24 @@ export default function PricingPage() {
                   </div>
                 ))}
               </div>
-              <a href="/#access" className={`mt-8 inline-flex h-11 w-full items-center justify-center rounded-[12px] text-[15px] font-semibold ${index === 1 ? 'landing-accent-button' : 'landing-secondary-button'}`}>
+              <Link href="/signin" className={`mt-8 inline-flex h-11 w-full items-center justify-center rounded-[12px] text-[15px] font-semibold ${index === 1 ? 'landing-accent-button' : 'landing-secondary-button'}`}>
                 {index === 2 ? 'Talk To Sales' : 'Get Started'}
-              </a>
+              </Link>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="landing-container py-6">
+        <div className="grid gap-5 md:grid-cols-3">
+          {[
+            ['No hidden volume tiers', 'Pricing scales with deployment posture, not opaque overage mechanics.'],
+            ['Environment controls included', 'Sandbox and production governance are part of every operational plan.'],
+            ['Audit readiness by default', 'Maintain policy history and reviewer accountability from first deployment.'],
+          ].map(([title, text]) => (
+            <article key={title} className="landing-surface landing-animated-card bg-[rgba(17,24,43,0.82)] p-6">
+              <div className="text-[15px] font-semibold text-landing-primary">{title}</div>
+              <p className="mt-3 text-[14px] leading-7 text-landing-secondary">{text}</p>
             </article>
           ))}
         </div>
