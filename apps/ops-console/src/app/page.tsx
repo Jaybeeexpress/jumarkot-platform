@@ -57,7 +57,7 @@ export default function DashboardPage() {
   return (
     <AppShell
       title="Dashboard"
-      subtitle="Centralized command view for alert pressure, queue throughput, and investigator activity."
+      subtitle="Live overview for alert pressure, queue throughput, and investigator activity."
       breadcrumb={['Ops Console', 'Dashboard']}
     >
       <div className="section-stack gap-[24px] dashboard-container">
@@ -73,7 +73,7 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-3 text-[12px] text-muted">
             <span className="enterprise-chip enterprise-chip-info">Active Window: 24h</span>
-            <button type="button" className="inline-flex items-center gap-1 font-medium text-secondary hover:text-primary">
+            <button type="button" className="enterprise-button enterprise-button-secondary h-8 gap-1 px-3 text-[12px]">
               Open full timeline
               <ArrowUpRight className="h-3.5 w-3.5" />
             </button>

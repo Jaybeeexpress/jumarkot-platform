@@ -105,26 +105,28 @@ export function AppShell({ title, breadcrumb, subtitle, children, rightPanel }: 
   return (
     <div className="enterprise-shell">
       <aside className={clsx('enterprise-sidebar', collapsed ? 'enterprise-sidebar-collapsed' : 'enterprise-sidebar-expanded')}>
-        <div className="flex h-16 items-center justify-between border-b border-light px-4">
+        <div className="enterprise-sidebar-brand">
           <div className={clsx('overflow-hidden', collapsed && 'hidden')}>
-            <div className="text-[15px] font-semibold text-primary">Jumarkot</div>
-            <div className="text-[11px] uppercase tracking-[0.04em] text-secondary">Ops Console</div>
+            <div className="text-[18px] font-semibold leading-none text-primary">Jumarkot</div>
+            <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Ops Console</div>
           </div>
-          <button
-            type="button"
-            onClick={handleSidebarToggle}
-            className="enterprise-button enterprise-button-secondary w-9 px-0"
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-          </button>
+          <div className={clsx('mt-3 flex', collapsed ? 'justify-center' : 'justify-end')}>
+            <button
+              type="button"
+              onClick={handleSidebarToggle}
+              className="enterprise-sidebar-collapse"
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            </button>
+          </div>
         </div>
 
-        <nav className="flex-1 overflow-auto px-3 py-4">
-          <div className="space-y-4">
+        <nav className="flex-1 overflow-auto px-4 py-4">
+          <div className="space-y-[18px]">
             {sections.map((section) => (
               <div key={section.label} className="space-y-2">
-                {!collapsed && <div className="enterprise-label px-2 text-[11px] text-muted">{section.label}</div>}
+                {!collapsed && <div className="enterprise-label px-2 py-1 text-[10px] text-muted">{section.label}</div>}
                 <div className="space-y-2">
                   {section.items.map((item, itemIndex) => {
                     const Icon = item.icon;
@@ -141,7 +143,7 @@ export function AppShell({ title, breadcrumb, subtitle, children, rightPanel }: 
                         key={item.href}
                         href={item.href}
                         className={clsx(
-                          'flex h-11 items-center gap-3 rounded-[10px] border-l-[3px] px-3 text-[14px] font-medium transition-all duration-150 ease-in',
+                          'flex h-10 items-center gap-[10px] rounded-[10px] border-l-[3px] px-3 text-[14px] font-medium transition-all duration-150 ease-in',
                           active
                             ? 'border-l-[var(--brand-primary)] bg-panel text-primary font-semibold shadow-[0_0_0_1px_#1F2937,0_8px_24px_rgba(0,0,0,0.18)]'
                             : 'border-l-transparent text-secondary hover:bg-[#1E293B] hover:text-primary',
@@ -172,47 +174,54 @@ export function AppShell({ title, breadcrumb, subtitle, children, rightPanel }: 
                 Last 24 Hours
                 <ChevronDown className="h-3.5 w-3.5" />
               </button>
-              <button type="button" className="hidden items-center gap-2 text-[12px] font-medium text-muted lg:inline-flex">
+              <span className="enterprise-chip enterprise-chip-neutral">
                 <RefreshCcw className="h-3.5 w-3.5" />
                 Synced 38s ago
-              </button>
-            </div>
-
-            <div className="hidden flex-1 justify-center md:flex">
-              <label className="relative w-full max-w-[440px]">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
-                <input className="enterprise-input pl-9" placeholder="Search alerts, cases, entities..." />
-              </label>
+              </span>
             </div>
 
             <div className="flex items-center gap-3">
               <button
                 type="button"
-                className="hidden h-9 items-center gap-2 rounded-[10px] border border-[rgba(99,102,241,0.4)] bg-[var(--brand-primary)] px-3 text-[12px] font-semibold text-white transition-all duration-150 ease-in hover:bg-[var(--brand-hover)] sm:inline-flex"
+                className="h-10 items-center gap-2 rounded-[10px] border border-[rgba(99,102,241,0.4)] bg-[var(--brand-primary)] px-3 text-[12px] font-semibold text-white transition-all duration-150 ease-in hover:bg-[var(--brand-hover)] inline-flex"
               >
                 <FilePlus2 className="h-3.5 w-3.5" />
                 Create Case
               </button>
               <button
                 type="button"
-                className="enterprise-button enterprise-button-secondary w-9 px-0"
+                className="enterprise-button enterprise-button-secondary h-10 w-10 px-0"
                 aria-label="Notifications"
               >
                 <Bell className="h-4 w-4" />
               </button>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-panel text-secondary">
+              <button
+                type="button"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-light bg-panel text-secondary transition-all duration-150 ease-in hover:bg-[#243245] hover:text-primary"
+                aria-label="Profile"
+              >
                 <UserCircle2 className="h-5 w-5" />
-              </div>
+              </button>
             </div>
           </div>
         </header>
 
         <div className="flex-1 overflow-auto">
-          <div className="content-max py-6">
-            <section className="enterprise-page-header mb-6">
+          <div className="content-max pb-6 pt-4">
+            <div className="mb-4">
+              <label className="relative block w-full">
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+                <input
+                  className="enterprise-input enterprise-search-input"
+                  placeholder="Search alerts, cases, entities..."
+                />
+              </label>
+            </div>
+
+            <section className="enterprise-page-header mb-4">
               <div className="min-w-0">
                 <div className="text-[11px] font-medium uppercase tracking-[0.04em] text-muted">{breadcrumbText}</div>
-                <h1 className="mt-1 text-[28px] font-bold leading-[1.05] text-primary">{title}</h1>
+                <h1 className="mt-[6px] text-[28px] font-bold leading-[1.05] text-primary">{title}</h1>
                 {subtitle ? <p className="mt-2 text-[13px] text-secondary">{subtitle}</p> : null}
               </div>
             </section>
