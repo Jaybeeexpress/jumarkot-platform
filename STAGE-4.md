@@ -15,7 +15,7 @@ This file is the working contract for Stage-4 delivery.
 - [x] Rebuild shared design tokens
 - [x] Create enterprise app shell
 - [x] Implement ops console pages
-- [ ] Implement developer portal pages
+- [x] Implement developer portal pages
 - [ ] Validate and push changes
 
 ## Quality Gates
@@ -51,10 +51,15 @@ This file is the working contract for Stage-4 delivery.
   - Commit: aec0941
 - All 13+ ops-console pages now use unified EnterpriseShell with consistent styling
 
-### Task 4: Developer Portal Pages (In Progress)
-- TBD: Implement/enhance developer portal authenticated pages
+### Task 4: Developer Portal Pages (Complete)
+- Enhanced authenticated developer portal pages with richer content:
+  - Usage page: Added performance metrics, improved chart visualization, API health timeline
+  - API Keys page: Added key statistics, security recommendations, usage tracking
+  - Webhooks page: Added delivery statistics, success rates, endpoint management actions
+  - Commit: 0d1ca1b
+- All authenticated portal pages maintained existing PortalShell but enhanced with metric cards
 
-### Task 5: Final Validation & Push (Pending)
+### Task 5: Final Validation & Push (In Progress)
 - Run full typecheck validation
 - Visual regression review on key screens
 - Final commit and push to stage-4
