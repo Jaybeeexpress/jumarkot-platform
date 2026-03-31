@@ -14,6 +14,16 @@ const reports = [
   { name: 'Rule Effectiveness Report', updated: '2026-03-28', format: 'Excel' },
 ];
 
+const throughputData = [35, 45, 52, 68, 73, 40, 50];
+const throughputHeights = ['h-[35%]', 'h-[45%]', 'h-[52%]', 'h-[68%]', 'h-[73%]', 'h-[40%]', 'h-[50%]'];
+
+const decisionDistribution = [
+  { label: 'Approved', count: '628', pct: '50%', widthClass: 'w-1/2' },
+  { label: 'Reviewed', count: '456', pct: '36%', widthClass: 'w-[36%]' },
+  { label: 'Escalated', count: '144', pct: '11%', widthClass: 'w-[11%]' },
+  { label: 'Declined', count: '19', pct: '2%', widthClass: 'w-[2%]' },
+];
+
 export default function ReportsPage() {
   return (
     <EnterpriseShell
@@ -46,8 +56,10 @@ export default function ReportsPage() {
               {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, idx) => (
                 <div key={day} className="enterprise-panel p-3 text-center">
                   <div className="text-[11px] text-muted">{day}</div>
-                  <div className="mt-2 h-16 bg-gradient-to-t from-[var(--jk-indigo-500)] from-[${[35, 45, 52, 68, 73, 40, 50][idx]}%] to-transparent rounded" />
-                  <div className="mt-2 text-[13px] text-primary">{[35, 45, 52, 68, 73, 40, 50][idx]}</div>
+                  <div className="mt-2 flex h-16 items-end rounded bg-[rgba(99,102,241,0.08)] px-1">
+                    <div className={`w-full rounded bg-gradient-to-t from-[var(--jk-indigo-500)] to-transparent ${throughputHeights[idx]}`} />
+                  </div>
+                  <div className="mt-2 text-[13px] text-primary">{throughputData[idx]}</div>
                 </div>
               ))}
             </div>
@@ -57,22 +69,14 @@ export default function ReportsPage() {
             <div className="enterprise-label">Decision Distribution</div>
             <h3 className="mt-2">Weekly decision breakdown</h3>
             <div className="mt-4 space-y-3">
-              {[
-                { label: 'Approved', count: '628', pct: '50%' },
-                { label: 'Reviewed', count: '456', pct: '36%' },
-                { label: 'Escalated', count: '144', pct: '11%' },
-                { label: 'Declined', count: '19', pct: '2%' },
-              ].map((item) => (
+              {decisionDistribution.map((item) => (
                 <div key={item.label} className="enterprise-panel p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[13px] text-primary">{item.label}</span>
                     <span className="text-[13px] font-semibold text-primary">{item.count}</span>
                   </div>
                   <div className="h-2 bg-opacity-20 rounded overflow-hidden">
-                    <div
-                      className="h-full bg-[var(--jk-indigo-500)]"
-                      style={{ width: item.pct }}
-                    />
+                    <div className={`h-full bg-[var(--jk-indigo-500)] ${item.widthClass}`} />
                   </div>
                   <div className="mt-1 text-[11px] text-muted text-right">{item.pct}</div>
                 </div>

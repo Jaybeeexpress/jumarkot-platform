@@ -114,6 +114,56 @@ function statusTone(value: string): string {
   return 'bg-[rgba(56,189,248,0.14)] text-[#7DD3FC]';
 }
 
+const barHeightClassMap: Record<number, string> = {
+  28: 'h-[28px]',
+  34: 'h-[34px]',
+  36: 'h-[36px]',
+  42: 'h-[42px]',
+  45: 'h-[45px]',
+  48: 'h-[48px]',
+  52: 'h-[52px]',
+  54: 'h-[54px]',
+  57: 'h-[57px]',
+  58: 'h-[58px]',
+  61: 'h-[61px]',
+  63: 'h-[63px]',
+  66: 'h-[66px]',
+  69: 'h-[69px]',
+  70: 'h-[70px]',
+  72: 'h-[72px]',
+  73: 'h-[73px]',
+  74: 'h-[74px]',
+  75: 'h-[75px]',
+  78: 'h-[78px]',
+  79: 'h-[79px]',
+  80: 'h-[80px]',
+  82: 'h-[82px]',
+  84: 'h-[84px]',
+  86: 'h-[86px]',
+  88: 'h-[88px]',
+  91: 'h-[91px]',
+  92: 'h-[92px]',
+  94: 'h-[94px]',
+  95: 'h-[95px]',
+  96: 'h-[96px]',
+  101: 'h-[101px]',
+  103: 'h-[103px]',
+  104: 'h-[104px]',
+  106: 'h-[106px]',
+  109: 'h-[109px]',
+  110: 'h-[110px]',
+  111: 'h-[111px]',
+  112: 'h-[112px]',
+  118: 'h-[118px]',
+  119: 'h-[119px]',
+  121: 'h-[121px]',
+  130: 'h-[130px]',
+};
+
+function barHeightClass(height: number): string {
+  return barHeightClassMap[height] ?? 'h-[48px]';
+}
+
 export function InteractivePreview() {
   const [activeWorkspace, setActiveWorkspace] = useState<WorkspaceKey>('analystQueue');
   const current = workspaceConfig[activeWorkspace];
@@ -205,8 +255,7 @@ export function InteractivePreview() {
                 {current.bars.map((height, index) => (
                   <div key={index} className="flex flex-1 flex-col items-center gap-2">
                     <div
-                      className={`w-full rounded-t-[10px] transition-all duration-150 ease-in ${index >= 9 ? 'bg-[var(--landing-accent)]' : 'bg-[rgba(56,189,248,0.75)]'}`}
-                      style={{ height: `${height}px` }}
+                      className={`w-full rounded-t-[10px] transition-all duration-150 ease-in ${barHeightClass(height)} ${index >= 9 ? 'bg-[var(--landing-accent)]' : 'bg-[rgba(56,189,248,0.75)]'}`}
                     />
                     <span className="text-[11px] font-medium text-landing-faint">W{index + 1}</span>
                   </div>

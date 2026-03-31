@@ -20,6 +20,23 @@ type DashboardTrendChartProps = {
   isLoading?: boolean;
 };
 
+const skeletonHeights = [
+  'h-[30%]',
+  'h-[43%]',
+  'h-[56%]',
+  'h-[69%]',
+  'h-[82%]',
+  'h-[35%]',
+  'h-[48%]',
+  'h-[61%]',
+  'h-[74%]',
+  'h-[87%]',
+  'h-[40%]',
+  'h-[53%]',
+  'h-[66%]',
+  'h-[79%]',
+];
+
 function TrendTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) {
   if (!active || !payload || payload.length === 0) {
     return null;
@@ -39,8 +56,7 @@ function ChartSkeleton() {
       {Array.from({ length: 14 }).map((_, index) => (
         <div
           key={index}
-          className="w-full animate-pulse rounded-t bg-panel"
-          style={{ height: `${30 + ((index * 13) % 60)}%` }}
+          className={`w-full animate-pulse rounded-t bg-panel ${skeletonHeights[index]}`}
         />
       ))}
     </div>

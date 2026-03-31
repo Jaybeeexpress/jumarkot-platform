@@ -100,8 +100,8 @@
     height: 64px;
     border-bottom: 1px solid var(--border-light);
     background: rgba(11, 18, 32, 0.94);
-    backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
   }
 
   .enterprise-surface {

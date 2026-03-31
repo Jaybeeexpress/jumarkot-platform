@@ -1,7 +1,7 @@
 import { PortalShell } from '@/components/layout/PortalShell';
 
 const series = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
-const heights = [72, 98, 110, 128, 144, 132, 168, 186];
+const barHeights = ['h-[72px]', 'h-[98px]', 'h-[110px]', 'h-[128px]', 'h-[144px]', 'h-[132px]', 'h-[168px]', 'h-[186px]'];
 
 const usageMetrics = [
   { label: 'Total Requests', value: '1.28M', trend: '+18% vs last month' },
@@ -38,10 +38,7 @@ export default function UsagePage() {
           <div className="mt-5 flex h-[260px] items-end gap-3 rounded-md border border-[#374151] px-4 py-5">
             {series.map((month, index) => (
               <div key={month} className="flex flex-1 flex-col items-center gap-2">
-                <div
-                  className={`w-full rounded-t-md bg-gradient-to-t from-[#6366F1] to-[#818CF8]`}
-                  style={{ height: `${heights[index]}px` }}
-                />
+                <div className={`w-full rounded-t-md bg-gradient-to-t from-[#6366F1] to-[#818CF8] ${barHeights[index]}`} />
                 <span className="text-[11px] text-[#6B7280]">{month}</span>
               </div>
             ))}
