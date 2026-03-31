@@ -1,16 +1,10 @@
-import { Manrope, Space_Grotesk } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 
-const manrope = Manrope({
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-body',
-  display: 'swap',
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  variable: '--font-heading',
+  variable: '--font-inter',
   display: 'swap',
 });
 
@@ -26,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${manrope.variable} ${spaceGrotesk.variable} app-body`}>
+      <body className={`${inter.variable} enterprise-body`}>
         <Providers>{children}</Providers>
       </body>
     </html>

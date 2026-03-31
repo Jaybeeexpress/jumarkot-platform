@@ -1,15 +1,11 @@
 import type { Metadata } from 'next';
-import { JetBrains_Mono, Space_Grotesk } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 
-const display = Space_Grotesk({
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-display',
-});
-
-const mono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-mono',
+  variable: '--font-inter',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -20,7 +16,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${display.variable} ${mono.variable}`}>{children}</body>
+      <body className={`${inter.variable} portal-body`}>{children}</body>
     </html>
   );
 }
