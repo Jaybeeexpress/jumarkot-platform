@@ -1,5 +1,6 @@
-import { AppShell } from '@/components/layout/AppShell';
+import { EnterpriseShell } from '@/components/layout/EnterpriseShell';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { OPS_CONSOLE_NAV_SECTIONS } from '@/lib/nav-config';
 const matchedRules = [
   'Impossible travel check',
   'Velocity threshold escalation',
@@ -16,7 +17,13 @@ const signals = [
 
 export default function DecisionsPage() {
   return (
-    <AppShell title="Decision Explainability" breadcrumb={['Ops Console', 'Decisions']}>
+    <EnterpriseShell
+      title="Decision Explainability"
+      breadcrumb={['Ops Console', 'Decisions']}
+      navSections={OPS_CONSOLE_NAV_SECTIONS}
+      searchPlaceholder="Search decisions..."
+      environmentLabel="Production"
+    >
       <div className="app-grid">
         <section className="enterprise-card-dense row-span-6">
           <div className="enterprise-label">Decision Explainability Panel</div>
@@ -46,6 +53,6 @@ export default function DecisionsPage() {
           </div>
         </section>
       </div>
-    </AppShell>
+    </EnterpriseShell>
   );
 }

@@ -1,8 +1,15 @@
-import { AppShell } from '@/components/layout/AppShell';
+import { EnterpriseShell } from '@/components/layout/EnterpriseShell';
+import { OPS_CONSOLE_NAV_SECTIONS } from '@/lib/nav-config';
 
 export default function ScreeningPage() {
   return (
-    <AppShell title="Screening" breadcrumb={['Ops Console', 'Screening']}>
+    <EnterpriseShell
+      title="Screening"
+      breadcrumb={['Ops Console', 'Screening']}
+      navSections={OPS_CONSOLE_NAV_SECTIONS}
+      searchPlaceholder="Search screening items..."
+      environmentLabel="Production"
+    >
       <div className="app-grid">
         <section className="enterprise-card-dense row-span-12">
           <div className="enterprise-label">Screening Workspace</div>
@@ -14,6 +21,6 @@ export default function ScreeningPage() {
           </div>
         </section>
       </div>
-    </AppShell>
+    </EnterpriseShell>
   );
 }

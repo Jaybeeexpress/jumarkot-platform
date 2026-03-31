@@ -1,9 +1,16 @@
-import { AppShell } from '@/components/layout/AppShell';
+import { EnterpriseShell } from '@/components/layout/EnterpriseShell';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { OPS_CONSOLE_NAV_SECTIONS } from '@/lib/nav-config';
 
 export default function EntitiesPage() {
   return (
-    <AppShell title="Entity Detail" breadcrumb={['Ops Console', 'Entities', 'user_982']}>
+    <EnterpriseShell
+      title="Entity Detail"
+      breadcrumb={['Ops Console', 'Entities', 'user_982']}
+      navSections={OPS_CONSOLE_NAV_SECTIONS}
+      searchPlaceholder="Search entities..."
+      environmentLabel="Production"
+    >
       <div className="section-stack">
         <section className="enterprise-card-dense">
           <div className="flex flex-wrap items-center justify-between gap-4">
@@ -44,6 +51,6 @@ export default function EntitiesPage() {
           </section>
         </div>
       </div>
-    </AppShell>
+    </EnterpriseShell>
   );
 }

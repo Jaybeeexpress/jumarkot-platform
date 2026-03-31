@@ -1,5 +1,6 @@
-import { AppShell } from '@/components/layout/AppShell';
+import { EnterpriseShell } from '@/components/layout/EnterpriseShell';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { OPS_CONSOLE_NAV_SECTIONS } from '@/lib/nav-config';
 const rules = [
   ['Credential Mismatch Escalation', 'ACCOUNT', '120', 'REVIEW', '+18', 'ACTIVE'],
   ['Impossible Travel Block', 'LOGIN', '140', 'BLOCK', '+30', 'ACTIVE'],
@@ -9,7 +10,13 @@ const rules = [
 
 export default function RulesPage() {
   return (
-    <AppShell title="Rules" breadcrumb={['Ops Console', 'Rules']}>
+    <EnterpriseShell
+      title="Rules"
+      breadcrumb={['Ops Console', 'Rules']}
+      navSections={OPS_CONSOLE_NAV_SECTIONS}
+      searchPlaceholder="Search rules and policies..."
+      environmentLabel="Production"
+    >
       <div className="section-stack">
         <section className="enterprise-card-dense">
           <div className="app-grid">
@@ -54,6 +61,6 @@ export default function RulesPage() {
           </table>
         </section>
       </div>
-    </AppShell>
+    </EnterpriseShell>
   );
 }

@@ -1,5 +1,6 @@
-import { AppShell } from '@/components/layout/AppShell';
+import { EnterpriseShell } from '@/components/layout/EnterpriseShell';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { OPS_CONSOLE_NAV_SECTIONS } from '@/lib/nav-config';
 
 const tabs = ['Overview', 'Alerts', 'Timeline', 'Evidence', 'Notes'];
 
@@ -24,7 +25,14 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ cas
   );
 
   return (
-    <AppShell title="Case Detail" breadcrumb={['Ops Console', 'Cases', caseId]} rightPanel={rightPanel}>
+    <EnterpriseShell
+      title="Case Detail"
+      breadcrumb={['Ops Console', 'Cases', caseId]}
+      navSections={OPS_CONSOLE_NAV_SECTIONS}
+      searchPlaceholder="Search case details..."
+      environmentLabel="Production"
+      rightPanel={rightPanel}
+    >
       <div className="section-stack">
         <section className="enterprise-card-dense sticky top-6 z-10 flex h-20 items-center justify-between">
           <div>
@@ -59,6 +67,6 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ cas
           </section>
         </div>
       </div>
-    </AppShell>
+    </EnterpriseShell>
   );
 }

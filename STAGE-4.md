@@ -13,7 +13,7 @@ This file is the working contract for Stage-4 delivery.
 ## Delivery Checklist
 
 - [x] Rebuild shared design tokens
-- [ ] Create enterprise app shell
+- [x] Create enterprise app shell
 - [ ] Implement ops console pages
 - [ ] Implement developer portal pages
 - [ ] Validate and push changes
@@ -29,4 +29,6 @@ This file is the working contract for Stage-4 delivery.
 ## Notes
 
 - Shared tokens extracted to packages/design-tokens/src/tokens.css and imported by both frontend apps.
-- Use this file to track concrete Stage-4 deliverables and acceptance evidence as work lands.
+- Created `EnterpriseShell` component in ops-console that both apps can use for consistent enterprise UI patterns.
+- Migrated all ops-console pages to use the new EnterpriseShell with configurable nav sections.
+- EnterpriseShell is now in apps/ops-console/src/components/layout/ for easy import and TypeScript support.

@@ -1,8 +1,15 @@
-import { AppShell } from '@/components/layout/AppShell';
+import { EnterpriseShell } from '@/components/layout/EnterpriseShell';
+import { OPS_CONSOLE_NAV_SECTIONS } from '@/lib/nav-config';
 
 export default function AdminPage() {
   return (
-    <AppShell title="Admin" breadcrumb={['Ops Console', 'Admin']}>
+    <EnterpriseShell
+      title="Admin"
+      breadcrumb={['Ops Console', 'Admin']}
+      navSections={OPS_CONSOLE_NAV_SECTIONS}
+      searchPlaceholder="Search configuration..."
+      environmentLabel="Production"
+    >
       <div className="app-grid">
         <section className="enterprise-card-dense row-span-6">
           <div className="enterprise-label">Platform Configuration</div>
@@ -21,6 +28,6 @@ export default function AdminPage() {
           </div>
         </section>
       </div>
-    </AppShell>
+    </EnterpriseShell>
   );
 }

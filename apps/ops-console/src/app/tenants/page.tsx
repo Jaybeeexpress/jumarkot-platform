@@ -1,5 +1,6 @@
-import { AppShell } from '@/components/layout/AppShell';
+import { EnterpriseShell } from '@/components/layout/EnterpriseShell';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { OPS_CONSOLE_NAV_SECTIONS } from '@/lib/nav-config';
 
 export default function TenantsPage() {
   const tenants = [
@@ -11,7 +12,13 @@ export default function TenantsPage() {
   ];
 
   return (
-    <AppShell title="Tenants" breadcrumb={['Ops Console', 'Tenants']}>
+    <EnterpriseShell
+      title="Tenants"
+      breadcrumb={['Ops Console', 'Tenants']}
+      navSections={OPS_CONSOLE_NAV_SECTIONS}
+      searchPlaceholder="Search tenants..."
+      environmentLabel="Production"
+    >
       <div className="section-stack">
         <section className="enterprise-card-dense">
           <div className="mb-4 flex items-center justify-between">
@@ -81,6 +88,6 @@ export default function TenantsPage() {
           </div>
         </section>
       </div>
-    </AppShell>
+    </EnterpriseShell>
   );
 }

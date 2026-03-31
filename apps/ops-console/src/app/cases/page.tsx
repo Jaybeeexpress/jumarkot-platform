@@ -1,7 +1,8 @@
 import type { Route } from 'next';
 import Link from 'next/link';
-import { AppShell } from '@/components/layout/AppShell';
+import { EnterpriseShell } from '@/components/layout/EnterpriseShell';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { OPS_CONSOLE_NAV_SECTIONS } from '@/lib/nav-config';
 
 const cases = [
   ['CASE-1208', '2026-03-31 09:02', 'ALT-90314', 'P1', '00:18:42', 'OPEN', 'S. Cole'],
@@ -11,7 +12,13 @@ const cases = [
 
 export default function CasesPage() {
   return (
-    <AppShell title="Cases" breadcrumb={['Ops Console', 'Cases']}>
+    <EnterpriseShell
+      title="Cases"
+      breadcrumb={['Ops Console', 'Cases']}
+      navSections={OPS_CONSOLE_NAV_SECTIONS}
+      searchPlaceholder="Search case ID or alert..."
+      environmentLabel="Production"
+    >
       <div className="section-stack">
         <section className="enterprise-card-dense">
           <div className="flex h-14 items-center gap-4">
@@ -50,6 +57,6 @@ export default function CasesPage() {
           </table>
         </section>
       </div>
-    </AppShell>
+    </EnterpriseShell>
   );
 }

@@ -1,8 +1,15 @@
-import { AppShell } from '@/components/layout/AppShell';
+import { EnterpriseShell } from '@/components/layout/EnterpriseShell';
+import { OPS_CONSOLE_NAV_SECTIONS } from '@/lib/nav-config';
 
 export default function ReportsPage() {
   return (
-    <AppShell title="Reports" breadcrumb={['Ops Console', 'Reports']}>
+    <EnterpriseShell
+      title="Reports"
+      breadcrumb={['Ops Console', 'Reports']}
+      navSections={OPS_CONSOLE_NAV_SECTIONS}
+      searchPlaceholder="Search reports..."
+      environmentLabel="Production"
+    >
       <div className="app-grid">
         <section className="enterprise-card-dense row-span-12">
           <div className="enterprise-label">Reports</div>
@@ -13,6 +20,6 @@ export default function ReportsPage() {
           </div>
         </section>
       </div>
-    </AppShell>
+    </EnterpriseShell>
   );
 }
