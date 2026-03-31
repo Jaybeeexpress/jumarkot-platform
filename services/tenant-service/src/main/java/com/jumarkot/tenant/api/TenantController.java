@@ -31,6 +31,11 @@ public class TenantController {
                 tenantService.provision(req.slug(), req.name(), req.plan(), req.contactEmail()));
     }
 
+    @GetMapping
+    public ApiResponse<List<Tenant>> list(@RequestParam(defaultValue = "25") int limit) {
+        return ApiResponse.ok(tenantService.listTenants(limit));
+    }
+
     @GetMapping("/{tenantId}")
     public ApiResponse<Tenant> get(@PathVariable UUID tenantId) {
         return ApiResponse.ok(tenantService.findById(tenantId));

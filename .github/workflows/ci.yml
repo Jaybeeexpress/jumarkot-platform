@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, develop, stage-1]
+    branches: [main, develop, stage-1, stage-2, stage-3]
   pull_request:
-    branches: [main, develop]
+    branches: [main, develop, stage-2, stage-3]
 
 jobs:
   build-java:
@@ -53,7 +53,9 @@ jobs:
             -c "CREATE DATABASE decision_db;" \
             -c "CREATE DATABASE rules_db;" \
             -c "CREATE DATABASE tenant_db;" \
-            -c "CREATE DATABASE identity_db;"
+            -c "CREATE DATABASE identity_db;" \
+            -c "CREATE DATABASE ingestion_db;" \
+            -c "CREATE DATABASE entity_db;"
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
@@ -61,7 +63,7 @@ jobs:
       - name: Compile all modules
         run: ./gradlew build --parallel -x test
 
-      - name: Run Stage-1 tests
+      - name: Run backend tests
         run: |
           ./gradlew \
             :packages:shared-auth:test \
@@ -69,6 +71,8 @@ jobs:
             :services:rules-service:test \
             :services:tenant-service:test \
             :services:identity-access-service:test \
+            :services:event-ingestion-service:test \
+            :services:entity-profile-service:test \
             --parallel
         env:
           # ── Databases ─────────────────────────────────────────────────────
@@ -76,6 +80,8 @@ jobs:
           RULES_DB_URL: jdbc:postgresql://localhost:5432/rules_db
           TENANT_DB_URL: jdbc:postgresql://localhost:5432/tenant_db
           IDENTITY_DB_URL: jdbc:postgresql://localhost:5432/identity_db
+          INGESTION_DB_URL: jdbc:postgresql://localhost:5432/ingestion_db
+          ENTITY_DB_URL: jdbc:postgresql://localhost:5432/entity_db
           DB_USERNAME: jumarkot
           DB_PASSWORD: jumarkot_dev_secret
           POSTGRES_USER: jumarkot
@@ -86,10 +92,16 @@ jobs:
           REDIS_PASSWORD: ""
           # ── Kafka (not in CI; Spring Kafka connects lazily — OK) ──────────
           KAFKA_BOOTSTRAP_SERVERS: localhost:9092
-          # ── Service-to-service credentials (decision-engine → rules) ──────
+          EVENT_INGESTION_TOPIC: events.ingested
+          # ── Service-to-service credentials (decision-engine → rules-service) ──
           RULES_SERVICE_URL: http://localhost:8087
           RULES_SERVICE_USER: admin
           RULES_SERVICE_PASSWORD: changeme
+          # ── Per-service Basic auth credentials (must match spring.security.user) ─
+          TENANT_SERVICE_USER: admin
+          TENANT_SERVICE_PASSWORD: changeme
+          IDENTITY_SERVICE_USER: admin
+          IDENTITY_SERVICE_PASSWORD: changeme
 
   build-frontend:
     name: Build Frontend Apps
@@ -107,9 +119,13 @@ jobs:
             apps/ops-console/package-lock.json
             apps/developer-portal/package-lock.json
 
-      - name: Install & build ops-console
+      - name: Install ops-console dependencies
         working-directory: apps/ops-console
-        run: npm ci && npm run build
+        run: npm ci
+
+      - name: Run ops-console CI gate (coverage + typecheck + build)
+        working-directory: apps/ops-console
+        run: npm run test:ci
 
       - name: Install & build developer-portal
         working-directory: apps/developer-portal

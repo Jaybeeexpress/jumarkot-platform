@@ -38,6 +38,10 @@ public class TenantService {
                 .orElseThrow(() -> new TenantNotFoundException("Tenant not found: " + tenantId));
     }
 
+    public List<Tenant> listTenants(int limit) {
+        return repository.findAll(limit);
+    }
+
     public List<TenantEnvironment> getEnvironments(UUID tenantId) {
         return repository.findEnvironmentsByTenantId(tenantId);
     }

@@ -1,6 +1,7 @@
 package com.jumarkot.decision.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jumarkot.decision.config.RulesServiceProperties;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -12,6 +13,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -51,11 +53,17 @@ class RulesClientAuthTest {
                 .setBody("[]")
                 .setResponseCode(200));
 
+        RulesServiceProperties properties = new RulesServiceProperties();
+        properties.setBaseUrl(mockWebServer.url("/").toString());
+        properties.setUsername("admin");
+        properties.setPassword("changeme");
+        properties.setConnectTimeout(Duration.ofSeconds(2));
+        properties.setReadTimeout(Duration.ofSeconds(5));
+        properties.setBlockTimeout(Duration.ofSeconds(6));
+
         RulesClient client = new RulesClient(
                 WebClient.builder(),
-                mockWebServer.url("/").toString(),
-                "admin",
-                "changeme",
+            properties,
                 redis,
                 new ObjectMapper()
         );

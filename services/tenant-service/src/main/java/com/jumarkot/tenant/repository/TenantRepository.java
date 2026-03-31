@@ -44,6 +44,14 @@ public class TenantRepository {
                 .fetchOptional(this::mapTenant);
     }
 
+    public List<Tenant> findAll(int limit) {
+        return dsl.select()
+                .from(DSL.table("tenants"))
+                .orderBy(DSL.field("created_at").desc())
+                .limit(limit)
+                .fetch(this::mapTenant);
+    }
+
     public void insertEnvironment(TenantEnvironment env) {
         dsl.insertInto(DSL.table("tenant_environments"))
                 .set(DSL.field("id"),        env.id())

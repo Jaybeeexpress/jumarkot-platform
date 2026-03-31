@@ -2,31 +2,37 @@ import { clsx } from 'clsx';
 
 const variants: Record<string, string> = {
   // Rule / generic status
-  ACTIVE:      'bg-green-100 text-green-800',
-  INACTIVE:    'bg-slate-100 text-slate-600',
-  DRAFT:       'bg-yellow-100 text-yellow-800',
-  SUSPENDED:   'bg-red-100 text-red-700',
+  ACTIVE:      'bg-emerald-500/12 text-emerald-400 border border-emerald-500/30',
+  INACTIVE:    'bg-slate-500/12 text-slate-300 border border-slate-500/30',
+  DRAFT:       'bg-amber-500/12 text-amber-400 border border-amber-500/30',
+  SUSPENDED:   'bg-rose-500/12 text-rose-400 border border-rose-500/30',
   // RiskDecision
-  APPROVE:     'bg-green-100 text-green-800',
-  REVIEW:      'bg-amber-100 text-amber-800',
-  DECLINE:     'bg-red-100 text-red-800',
-  BLOCK:       'bg-red-200 text-red-900',
+  APPROVE:     'bg-emerald-500/12 text-emerald-400 border border-emerald-500/30',
+  REVIEW:      'bg-amber-500/12 text-amber-400 border border-amber-500/30',
+  DECLINE:     'bg-rose-500/12 text-rose-400 border border-rose-500/30',
+  BLOCK:       'bg-rose-500/18 text-rose-300 border border-rose-500/30',
   // RiskLevel
-  LOW:         'bg-green-50 text-green-700',
-  MEDIUM:      'bg-yellow-50 text-yellow-700',
-  HIGH:        'bg-orange-100 text-orange-800',
-  CRITICAL:    'bg-red-100 text-red-800',
+  LOW:         'bg-emerald-500/12 text-emerald-400 border border-emerald-500/30',
+  MEDIUM:      'bg-amber-500/12 text-amber-400 border border-amber-500/30',
+  HIGH:        'bg-orange-500/12 text-orange-400 border border-orange-500/30',
+  CRITICAL:    'bg-rose-500/12 text-rose-400 border border-rose-500/30',
   // Environments
-  PRODUCTION:  'bg-blue-100 text-blue-800',
-  SANDBOX:     'bg-purple-100 text-purple-800',
+  PRODUCTION:  'bg-sky-500/12 text-sky-400 border border-sky-500/30',
+  SANDBOX:     'bg-indigo-500/12 text-indigo-400 border border-indigo-500/30',
+  OPEN:        'bg-sky-500/12 text-sky-400 border border-sky-500/30',
+  IN_PROGRESS: 'bg-amber-500/12 text-amber-400 border border-amber-500/30',
+  RESOLVED:    'bg-emerald-500/12 text-emerald-400 border border-emerald-500/30',
+  P1:          'bg-rose-500/12 text-rose-400 border border-rose-500/30',
+  P2:          'bg-orange-500/12 text-orange-400 border border-orange-500/30',
+  P3:          'bg-sky-500/12 text-sky-400 border border-sky-500/30',
 };
 
 export function StatusBadge({ value }: { value: string }) {
   return (
     <span
       className={clsx(
-        'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
-        variants[value] ?? 'bg-slate-100 text-slate-700',
+        'inline-flex h-6 items-center rounded-md px-2.5 text-[11px] font-semibold tracking-[0.04em]',
+        variants[value] ?? 'bg-slate-500/12 text-slate-300 border border-slate-500/30',
       )}
     >
       {value}

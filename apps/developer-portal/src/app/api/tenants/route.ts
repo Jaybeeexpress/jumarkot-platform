@@ -1,0 +1,42 @@
+import { NextRequest, NextResponse } from 'next/server';
+
+const TENANT_SERVICE_URL = process.env.TENANT_SERVICE_URL ?? 'http://localhost:8082';
+const TENANT_SERVICE_USER = process.env.TENANT_SERVICE_USER ?? 'admin';
+const TENANT_SERVICE_PASSWORD = process.env.TENANT_SERVICE_PASSWORD ?? 'changeme';
+
+function basicAuth() {
+  return 'Basic ' + Buffer.from(`${TENANT_SERVICE_USER}:${TENANT_SERVICE_PASSWORD}`).toString('base64');
+}
+
+function jsonParseOrFallback(value: string, fallback: unknown) {
+  try {
+    return value ? JSON.parse(value) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+export async function GET(request: NextRequest) {
+  const limit = request.nextUrl.searchParams.get('limit')?.trim() ?? '25';
+
+  try {
+    const upstream = await fetch(`${TENANT_SERVICE_URL}/v1/tenants?limit=${encodeURIComponent(limit)}`, {
+      headers: {
+        Authorization: basicAuth(),
+      },
+      cache: 'no-store',
+    });
+    const responseText = await upstream.text();
+    const data = jsonParseOrFallback(responseText, { success: upstream.ok });
+    return NextResponse.json(data, { status: upstream.status });
+  } catch {
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'UPSTREAM_ERROR',
+        message: 'Could not reach tenant-service.',
+      },
+      { status: 502 },
+    );
+  }
+}

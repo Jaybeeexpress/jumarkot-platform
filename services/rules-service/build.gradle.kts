@@ -13,12 +13,14 @@ dependencies {
     implementation(libs.spring.boot.jooq)
     implementation(libs.spring.boot.redis)
     implementation(libs.spring.boot.validation)
+    implementation(libs.spring.boot.jackson2)
     implementation(libs.flyway.core)
     implementation(libs.flyway.postgres)
 
     runtimeOnly(libs.postgresql)
 
     testImplementation(libs.spring.boot.test)
+    testImplementation(libs.spring.boot.webmvc.test)
     testImplementation(libs.testcontainers.junit)
     testImplementation(libs.testcontainers.pg)
 }

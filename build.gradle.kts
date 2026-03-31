@@ -9,6 +9,10 @@ plugins {
 subprojects {
     apply(plugin = "java")
 
+    dependencies {
+        add("testRuntimeOnly", "org.junit.platform:junit-platform-launcher")
+    }
+
     extensions.configure<JavaPluginExtension> {
         toolchain {
             languageVersion.set(JavaLanguageVersion.of(21))

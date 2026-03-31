@@ -1,5 +1,35 @@
 {
-    "java.compile.nullAnalysis.mode": "automatic",
+    // ── Java Language Server ──────────────────────────────────────────────────
+
+    // Explicit JDK 21 runtime so JDT doesn't have to auto-detect.
+    // Absence of this on Windows causes "java.lang.Object cannot be resolved"
+    // on any compilation unit where the JRE system library fails auto-discovery.
+    "java.jdt.ls.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.10.7-hotspot",
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-21",
+            "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.10.7-hotspot",
+            "default": true
+        }
+    ],
+
+    // Force Gradle project import to use the same JDK as the language server.
+    // This prevents split-runtime states where JDT runs on one JDK and Gradle
+    // model import resolves with another, which can flood Problems with
+    // "java.lang.Object cannot be resolved" diagnostics.
+    "java.import.gradle.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.10.7-hotspot",
+
+    // Avoid lightweight mode; it often shows false unresolved-type errors in
+    // multi-module Gradle workspaces until full project import completes.
+    "java.server.launchMode": "Standard",
+
+    // Always use the checked-in Gradle wrapper for import model resolution.
+    "java.import.gradle.wrapper.enabled": true,
+
+    // Disabled — "automatic" raises false-positive @NonNull annotation warnings
+    // against Spring/JUnit library methods that annotate their own parameters.
+    // Null safety is enforced at the Gradle build level, not the IDE level.
+    "java.compile.nullAnalysis.mode": "disabled",
 
     // Prevents JDT from opening JARs in build/libs/ with exclusive file handles.
     // Without this, the Java Language Server holds those JARs open (no FILE_SHARE_DELETE
@@ -22,9 +52,21 @@
     // Keep Gradle project model enabled so multi-module source linking works.
     "java.import.gradle.enabled": true,
 
-    // Prompt rather than silently re-syncing when build files change, so the
-    // Tooling API import doesn't race with an in-progress Gradle invocation.
+    // Auto-sync when build files change so classpath stays current.
     "java.configuration.updateBuildConfiguration": "automatic",
+
+    // When classpath refresh is in progress, avoid turning transient incomplete
+    // classpath states into hard errors in the Problems panel.
+    "java.errors.incompleteClasspath.severity": "warning",
+
+    // ── CSS ───────────────────────────────────────────────────────────────────
+
+    // The VS Code CSS language server doesn't understand PostCSS/Tailwind directives.
+    // Suppressing unknown at-rule warnings removes the @tailwind false positives in
+    // globals.css — the Tailwind build pipeline is unaffected.
+    "css.lint.unknownAtRules": "ignore",
+
+    // ── File system ───────────────────────────────────────────────────────────
 
     // Exclude heavy directories from the file watcher to reduce handle churn.
     "files.watcherExclude": {

@@ -1,14 +1,17 @@
 package com.jumarkot.decision.client;
 
+import com.jumarkot.decision.config.RulesServiceProperties;
 import com.jumarkot.decision.rules.RuleDto;
+import io.netty.channel.ChannelOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.netty.http.client.HttpClient;
 
 import java.time.Duration;
 import java.util.List;
@@ -33,16 +36,24 @@ public class RulesClient {
     private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
     private final String rulesServiceUser;
     private final String rulesServicePassword;
+        private final Duration blockTimeout;
 
     public RulesClient(WebClient.Builder builder,
-                       @Value("${jumarkot.rules-service.base-url}") String baseUrl,
-                       @Value("${jumarkot.rules-service.username}") String rulesServiceUser,
-                       @Value("${jumarkot.rules-service.password}") String rulesServicePassword,
+                   RulesServiceProperties rulesServiceProperties,
                        StringRedisTemplate redis,
                        com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
-        this.webClient = builder.baseUrl(baseUrl).build();
-        this.rulesServiceUser = rulesServiceUser;
-        this.rulesServicePassword = rulesServicePassword;
+        HttpClient httpClient = HttpClient.create()
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
+                Math.toIntExact(rulesServiceProperties.getConnectTimeout().toMillis()))
+            .responseTimeout(rulesServiceProperties.getReadTimeout());
+
+        this.webClient = builder
+            .clientConnector(new ReactorClientHttpConnector(httpClient))
+            .baseUrl(rulesServiceProperties.getBaseUrl())
+            .build();
+        this.rulesServiceUser = rulesServiceProperties.getUsername();
+        this.rulesServicePassword = rulesServiceProperties.getPassword();
+        this.blockTimeout = rulesServiceProperties.getBlockTimeout();
         this.redis = redis;
         this.objectMapper = objectMapper;
     }
@@ -69,7 +80,7 @@ public class RulesClient {
             .header(HttpHeaders.AUTHORIZATION, basicAuthHeader())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<RuleDto>>() {})
-                .block(Duration.ofSeconds(5));
+                        .block(blockTimeout);
 
         if (rules == null) rules = List.of();
 

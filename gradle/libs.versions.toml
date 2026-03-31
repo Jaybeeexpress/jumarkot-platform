@@ -1,5 +1,5 @@
 [versions]
-spring-boot                  = "3.4.1"
+spring-boot                  = "4.0.5"
 spring-dependency-management = "1.1.7"
 flyway                       = "10.20.1"
 postgresql                   = "42.7.4"
@@ -17,7 +17,9 @@ spring-boot-actuator    = { module = "org.springframework.boot:spring-boot-start
 spring-boot-jooq        = { module = "org.springframework.boot:spring-boot-starter-jooq" }
 spring-boot-redis       = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
 spring-boot-validation  = { module = "org.springframework.boot:spring-boot-starter-validation" }
+spring-boot-jackson2    = { module = "org.springframework.boot:spring-boot-jackson2" }
 spring-boot-test        = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-boot-webmvc-test = { module = "org.springframework.boot:spring-boot-webmvc-test" }
 spring-boot-webclient   = { module = "org.springframework.boot:spring-boot-starter-webflux" }
 
 # Kafka
