@@ -2,16 +2,32 @@ import Link from 'next/link';
 import {
   ArrowRight,
   BadgeDollarSign,
+  BookOpenText,
+  Bot,
+  CircleDollarSign,
+  Code2,
+  FileCheck2,
   GitBranch,
   Github,
   Gitlab,
+  Layers3,
   LockKeyhole,
+  Radar,
+  Scale,
   Settings2,
   Shield,
   Sparkles,
+  Workflow,
 } from 'lucide-react';
 
-const navItems = ['Product', 'Solutions', 'Pricing', 'Developers', 'Resources', 'Sign In'];
+const navItems = [
+  { label: 'Product', href: '#product' },
+  { label: 'Solutions', href: '#solutions' },
+  { label: 'Pricing', href: '#pricing' },
+  { label: 'Developers', href: '#developers' },
+  { label: 'Resources', href: '#resources' },
+  { label: 'Sign In', href: '#access' },
+];
 
 const providers = [
   { label: 'Continue with GitHub', icon: Github },
@@ -37,6 +53,87 @@ const introCards = [
   },
 ];
 
+const previewAlerts = [
+  ['ALT-90314', 'Credential abuse pattern', '91', 'Open'],
+  ['ALT-90309', 'Transaction routing spike', '88', 'Review'],
+  ['ALT-90288', 'Impossible travel sequence', '95', 'Escalated'],
+];
+
+const productPanels = [
+  {
+    label: 'Shared Command Surface',
+    title: 'One operating model for analysts, platform admins, and developers',
+    text: 'Jumarkot keeps queue state, decision logic, environment health, and delivery telemetry aligned in a single structured interface.',
+    icon: Layers3,
+  },
+  {
+    label: 'Risk Orchestration',
+    title: 'Route every signal through explainable policy and action layers',
+    text: 'Pair rule execution, review routing, and downstream controls with the exact signal context that triggered them.',
+    icon: Workflow,
+  },
+];
+
+const solutionCards = [
+  {
+    title: 'Fraud Operations',
+    text: 'Centralize alert review, case ownership, and escalation timing for faster fraud response.',
+    icon: Radar,
+  },
+  {
+    title: 'Compliance Review',
+    text: 'Track screening actions, policy exceptions, and audit evidence in one governed workflow.',
+    icon: FileCheck2,
+  },
+  {
+    title: 'Trust & Platform Risk',
+    text: 'Give product, risk, and engineering teams a single place to inspect routing decisions and service health.',
+    icon: Scale,
+  },
+];
+
+const pricingPlans = [
+  {
+    name: 'Sandbox',
+    price: '$0',
+    note: 'For evaluation and integration design',
+    features: ['Developer portal access', 'Test webhooks and request logs', 'Sample policies and screening data'],
+  },
+  {
+    name: 'Growth',
+    price: '$1,250',
+    note: 'Per month, billed annually',
+    features: ['Live decision routing', 'Analyst queues and case tooling', 'Environment monitoring and webhook governance'],
+  },
+  {
+    name: 'Enterprise',
+    price: 'Custom',
+    note: 'For large-scale fraud and compliance teams',
+    features: ['Multi-team controls and SSO', 'Audit workflows and bespoke policies', 'Dedicated onboarding and operating reviews'],
+  },
+];
+
+const developerLinks = [
+  ['API keys and environment access', 'Create scoped access and rotate credentials cleanly.', 'Open API Keys', '/api-keys'],
+  ['Request logs and payload inspection', 'Review inbound and outbound traffic with request and response context.', 'Inspect Logs', '/request-logs'],
+  ['Webhook governance', 'Monitor delivery performance and retry operationally sensitive events.', 'Open Webhooks', '/webhooks'],
+];
+
+const resources = [
+  {
+    label: 'Implementation Guide',
+    text: 'Roll out ingestion, decisioning, and webhook delivery with a structured launch plan.',
+  },
+  {
+    label: 'Operational Playbooks',
+    text: 'Align analysts and compliance reviewers on triage, escalation, and closure patterns.',
+  },
+  {
+    label: 'Product Walkthrough',
+    text: 'Review dashboards, queues, and policy surfaces in a guided platform narrative.',
+  },
+];
+
 const footerLinks = ['Privacy Policy', 'Terms of Service', 'Contact'];
 
 export default function HomePage() {
@@ -50,8 +147,8 @@ export default function HomePage() {
 
           <nav className="hidden items-center gap-7 lg:flex">
             {navItems.map((item) => (
-              <a key={item} href={item === 'Sign In' ? '#access' : '#'} className="landing-nav-link">
-                {item}
+              <a key={item.label} href={item.href} className="landing-nav-link">
+                {item.label}
               </a>
             ))}
           </nav>
@@ -169,7 +266,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="grid min-h-[420px] gap-0 lg:grid-cols-[220px_1fr]">
+                <div className="grid min-h-[480px] gap-0 lg:grid-cols-[220px_1fr]">
                   <aside className="border-r border-[var(--landing-border)] bg-[#0D1325] p-5">
                     <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Workspaces</div>
                     <div className="mt-4 space-y-3">
@@ -199,20 +296,43 @@ export default function HomePage() {
                   </aside>
 
                   <div className="bg-[#0F172A] p-6">
-                    <div className="grid gap-4 xl:grid-cols-[1.4fr_0.85fr]">
-                      <section className="rounded-[12px] border border-[var(--landing-border)] bg-[#11182B] p-5">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Decision Throughput</div>
-                            <div className="mt-1 text-[18px] font-semibold text-landing-primary">Risk Routing Overview</div>
-                          </div>
-                          <div className="inline-flex items-center gap-2 rounded-full bg-[rgba(56,189,248,0.1)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--landing-tech)]">
+                    <div className="rounded-[12px] border border-[var(--landing-border)] bg-[#11182B] px-4 py-3">
+                      <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+                        <div>
+                          <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Decision Throughput</div>
+                          <div className="mt-1 text-[18px] font-semibold text-landing-primary">Risk Routing Overview</div>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="inline-flex items-center gap-2 rounded-full bg-[rgba(56,189,248,0.1)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--landing-tech)]">
                             <LockKeyhole className="h-3.5 w-3.5" />
                             Protected
-                          </div>
+                          </span>
+                          <span className="rounded-full border border-[var(--landing-border)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.04em] text-landing-muted">
+                            Production
+                          </span>
+                          <span className="rounded-full border border-[var(--landing-border)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.04em] text-landing-muted">
+                            Last 12 Hours
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 grid gap-4 xl:grid-cols-[1.45fr_0.95fr]">
+                      <section className="rounded-[12px] border border-[var(--landing-border)] bg-[#11182B] p-5">
+                        <div className="grid gap-3 sm:grid-cols-3">
+                          {[
+                            ['Signals Routed', '18.4K'],
+                            ['Review Escalations', '241'],
+                            ['Policy Matches', '3.1K'],
+                          ].map(([label, value]) => (
+                            <div key={label} className="rounded-[10px] border border-[var(--landing-border)] bg-[rgba(15,23,42,0.9)] px-4 py-3">
+                              <div className="text-[11px] font-semibold uppercase tracking-[0.04em] text-landing-muted">{label}</div>
+                              <div className="mt-2 text-[24px] font-bold text-landing-primary">{value}</div>
+                            </div>
+                          ))}
                         </div>
 
-                        <div className="mt-6 flex h-[220px] items-end gap-3">
+                        <div className="mt-6 flex h-[190px] items-end gap-3 rounded-[12px] border border-[var(--landing-border)] bg-[rgba(15,23,42,0.92)] px-4 py-4">
                           {[48, 66, 58, 78, 72, 84, 96, 91, 110, 106, 118, 130].map((height, index) => (
                             <div key={index} className="flex flex-1 flex-col items-center gap-2">
                               <div
@@ -220,6 +340,23 @@ export default function HomePage() {
                                 style={{ height }}
                               />
                               <span className="text-[11px] font-medium text-landing-faint">W{index + 1}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="mt-5 overflow-hidden rounded-[12px] border border-[var(--landing-border)] bg-[rgba(15,23,42,0.92)]">
+                          <div className="grid grid-cols-[1.2fr_1.6fr_0.7fr_0.8fr] border-b border-[var(--landing-border)] bg-[#11182B] px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.04em] text-landing-muted">
+                            <span>Alert</span>
+                            <span>Reason</span>
+                            <span>Score</span>
+                            <span>Status</span>
+                          </div>
+                          {previewAlerts.map((alert) => (
+                            <div key={alert[0]} className="grid grid-cols-[1.2fr_1.6fr_0.7fr_0.8fr] items-center border-b border-[rgba(43,53,80,0.7)] px-4 py-3 text-[13px] last:border-b-0 hover:bg-[rgba(50,62,93,0.24)]">
+                              <span className="font-semibold text-[var(--landing-tech)]">{alert[0]}</span>
+                              <span className="text-landing-secondary">{alert[1]}</span>
+                              <span className="font-semibold text-landing-primary">{alert[2]}</span>
+                              <span className="inline-flex w-fit rounded-full bg-[rgba(255,45,111,0.12)] px-2.5 py-1 text-[11px] font-semibold text-[#FDA4AF]">{alert[3]}</span>
                             </div>
                           ))}
                         </div>
@@ -242,6 +379,21 @@ export default function HomePage() {
                             <div className="mt-2 text-[13px] text-landing-muted">{note}</div>
                           </div>
                         ))}
+
+                        <div className="rounded-[12px] border border-[var(--landing-border)] bg-[#11182B] p-4">
+                          <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Analyst Notes</div>
+                          <div className="mt-3 space-y-3">
+                            {[
+                              'Escalation pressure elevated in EU login flows.',
+                              'Queue routing stable after recent policy rollout.',
+                              'Webhook retries within SLO for all production tenants.',
+                            ].map((note) => (
+                              <div key={note} className="rounded-[10px] border border-[var(--landing-border)] bg-[rgba(15,23,42,0.92)] px-4 py-3 text-[13px] text-landing-secondary">
+                                {note}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </section>
                     </div>
                   </div>
@@ -251,13 +403,130 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="landing-container py-10">
+        <section id="product" className="landing-container py-10 scroll-mt-28">
           <div className="grid gap-5 xl:grid-cols-3">
             {introCards.map((card) => (
               <article key={card.title} className="landing-surface bg-[rgba(17,24,43,0.74)] p-6 transition-all duration-150 ease-in hover:bg-[rgba(26,34,56,0.92)]">
                 <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">{card.label}</div>
                 <h3 className="mt-4 text-[28px] font-semibold leading-[1.2] text-landing-primary">{card.title}</h3>
                 <p className="mt-4 text-[16px] leading-8 text-landing-secondary">{card.text}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-8 grid gap-5 xl:grid-cols-2">
+            {productPanels.map((panel) => {
+              const Icon = panel.icon;
+
+              return (
+                <article key={panel.title} className="landing-surface bg-[rgba(17,24,43,0.82)] p-7 transition-all duration-150 ease-in hover:bg-[rgba(26,34,56,0.96)]">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-[12px] bg-[rgba(255,45,111,0.12)] text-[var(--landing-accent)]">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">{panel.label}</div>
+                      <h3 className="mt-3 text-[28px] font-semibold leading-[1.2] text-landing-primary">{panel.title}</h3>
+                      <p className="mt-4 text-[16px] leading-8 text-landing-secondary">{panel.text}</p>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        <section id="solutions" className="landing-container py-10 scroll-mt-28">
+          <div className="mb-6 max-w-[760px]">
+            <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Solutions</div>
+            <h3 className="mt-3 text-[28px] font-semibold text-landing-primary">Designed for the teams that own enterprise trust outcomes.</h3>
+          </div>
+          <div className="grid gap-5 xl:grid-cols-3">
+            {solutionCards.map((card) => {
+              const Icon = card.icon;
+
+              return (
+                <article key={card.title} className="landing-surface bg-[rgba(17,24,43,0.82)] p-6 transition-all duration-150 ease-in hover:bg-[rgba(26,34,56,0.96)]">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-[12px] bg-[rgba(56,189,248,0.12)] text-[var(--landing-tech)]">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="mt-5 text-[22px] font-semibold text-landing-primary">{card.title}</h3>
+                  <p className="mt-3 text-[16px] leading-8 text-landing-secondary">{card.text}</p>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        <section id="pricing" className="landing-container py-10 scroll-mt-28">
+          <div className="mb-6 max-w-[760px]">
+            <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Pricing</div>
+            <h3 className="mt-3 text-[28px] font-semibold text-landing-primary">Structured entry points for evaluation, rollout, and scale.</h3>
+          </div>
+          <div className="grid gap-5 xl:grid-cols-3">
+            {pricingPlans.map((plan, index) => (
+              <article key={plan.name} className={`landing-surface p-6 transition-all duration-150 ease-in hover:bg-[rgba(26,34,56,0.96)] ${index === 1 ? 'bg-[rgba(255,45,111,0.08)]' : 'bg-[rgba(17,24,43,0.82)]'}`}>
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">{plan.name}</div>
+                    <div className="mt-3 text-[36px] font-bold leading-none text-landing-primary">{plan.price}</div>
+                  </div>
+                  {index === 1 && <span className="rounded-full bg-[rgba(255,45,111,0.14)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.04em] text-[#FDA4AF]">Recommended</span>}
+                </div>
+                <div className="mt-3 text-[14px] text-landing-muted">{plan.note}</div>
+                <div className="mt-6 space-y-3">
+                  {plan.features.map((feature) => (
+                    <div key={feature} className="flex items-start gap-3 text-[15px] text-landing-secondary">
+                      <CircleDollarSign className="mt-0.5 h-4 w-4 shrink-0 text-[var(--landing-tech)]" />
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
+                <a href="#access" className={`mt-8 inline-flex h-11 w-full items-center justify-center rounded-[12px] text-[15px] font-semibold ${index === 1 ? 'landing-accent-button' : 'landing-secondary-button'}`}>
+                  {index === 2 ? 'Talk To Sales' : 'Get Started'}
+                </a>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="developers" className="landing-container py-10 scroll-mt-28">
+          <div className="mb-6 max-w-[760px]">
+            <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Developers</div>
+            <h3 className="mt-3 text-[28px] font-semibold text-landing-primary">A portal experience built for integration teams, not just demos.</h3>
+          </div>
+          <div className="grid gap-5 xl:grid-cols-3">
+            {developerLinks.map(([title, text, cta, href], index) => (
+              <article key={title} className="landing-surface bg-[rgba(17,24,43,0.82)] p-6 transition-all duration-150 ease-in hover:bg-[rgba(26,34,56,0.96)]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-[12px] bg-[rgba(56,189,248,0.12)] text-[var(--landing-tech)]">
+                  {index === 0 ? <Code2 className="h-5 w-5" /> : index === 1 ? <Bot className="h-5 w-5" /> : <BookOpenText className="h-5 w-5" />}
+                </div>
+                <h3 className="mt-5 text-[22px] font-semibold text-landing-primary">{title}</h3>
+                <p className="mt-3 text-[16px] leading-8 text-landing-secondary">{text}</p>
+                <Link href={href} className="mt-6 inline-flex items-center gap-2 text-[15px] font-semibold text-[var(--landing-tech)] hover:text-[#7DD3FC]">
+                  {cta}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="resources" className="landing-container py-10 scroll-mt-28">
+          <div className="mb-6 max-w-[760px]">
+            <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Resources</div>
+            <h3 className="mt-3 text-[28px] font-semibold text-landing-primary">Operational guidance and implementation context for real deployments.</h3>
+          </div>
+          <div className="grid gap-5 xl:grid-cols-3">
+            {resources.map((resource) => (
+              <article key={resource.label} className="landing-surface bg-[rgba(17,24,43,0.82)] p-6 transition-all duration-150 ease-in hover:bg-[rgba(26,34,56,0.96)]">
+                <div className="text-[12px] font-semibold uppercase tracking-[0.04em] text-landing-muted">Resource</div>
+                <h3 className="mt-4 text-[22px] font-semibold text-landing-primary">{resource.label}</h3>
+                <p className="mt-3 text-[16px] leading-8 text-landing-secondary">{resource.text}</p>
+                <a href="#access" className="mt-6 inline-flex items-center gap-2 text-[15px] font-semibold text-[var(--landing-tech)] hover:text-[#7DD3FC]">
+                  Request Access
+                  <ArrowRight className="h-4 w-4" />
+                </a>
               </article>
             ))}
           </div>
