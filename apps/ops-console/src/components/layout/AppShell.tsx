@@ -8,9 +8,11 @@ import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
 import {
   Bell,
-  ChevronDown,
+  CalendarDays,
   ChevronLeft,
+  ChevronDown,
   ChevronRight,
+  FilePlus2,
   FileText,
   GanttChartSquare,
   LayoutDashboard,
@@ -19,6 +21,7 @@ import {
   Settings,
   ShieldAlert,
   ShieldCheck,
+  RefreshCcw,
   UserCircle2,
   Users,
   Waypoints,
@@ -27,6 +30,7 @@ import {
 type ShellProps = {
   title: string;
   breadcrumb: string[];
+  subtitle?: string;
   children: ReactNode;
   rightPanel?: ReactNode;
 };
@@ -79,7 +83,7 @@ const sections: Array<{
   },
 ];
 
-export function AppShell({ title, breadcrumb, children, rightPanel }: ShellProps) {
+export function AppShell({ title, breadcrumb, subtitle, children, rightPanel }: ShellProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [isSidebarAnimating, setIsSidebarAnimating] = useState(false);
@@ -116,11 +120,11 @@ export function AppShell({ title, breadcrumb, children, rightPanel }: ShellProps
           </button>
         </div>
 
-        <nav className="flex-1 overflow-auto px-4 py-4">
+        <nav className="flex-1 overflow-auto px-3 py-4">
           <div className="space-y-4">
             {sections.map((section) => (
               <div key={section.label} className="space-y-2">
-                {!collapsed && <div className="enterprise-label text-[11px] text-muted">{section.label}</div>}
+                {!collapsed && <div className="enterprise-label px-2 text-[11px] text-muted">{section.label}</div>}
                 <div className="space-y-2">
                   {section.items.map((item, itemIndex) => {
                     const Icon = item.icon;
@@ -137,7 +141,7 @@ export function AppShell({ title, breadcrumb, children, rightPanel }: ShellProps
                         key={item.href}
                         href={item.href}
                         className={clsx(
-                          'flex h-10 items-center gap-3 rounded-[8px] border-l-[3px] px-3 text-[14px] font-medium transition-all duration-150 ease-in',
+                          'flex h-11 items-center gap-3 rounded-[10px] border-l-[3px] px-3 text-[14px] font-medium transition-all duration-150 ease-in',
                           active
                             ? 'border-l-[var(--brand-primary)] bg-panel text-primary font-semibold shadow-[0_0_0_1px_#1F2937,0_8px_24px_rgba(0,0,0,0.18)]'
                             : 'border-l-transparent text-secondary hover:bg-[#1E293B] hover:text-primary',
@@ -159,33 +163,42 @@ export function AppShell({ title, breadcrumb, children, rightPanel }: ShellProps
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="enterprise-topbar flex items-center">
+        <header className="enterprise-topbar enterprise-topbar-sticky flex items-center">
           <div className="content-max flex h-full items-center justify-between gap-4">
-            <div className="min-w-0">
-              <div className="text-[11px] font-medium uppercase tracking-[0.04em] text-muted">{breadcrumbText}</div>
-              <h1 className="text-[28px] font-bold leading-[1.05] text-primary">{title}</h1>
+            <div className="flex items-center gap-3">
+              <span className="enterprise-chip enterprise-chip-success">Production</span>
+              <button type="button" className="enterprise-button enterprise-button-secondary h-9 gap-2 px-3">
+                <CalendarDays className="h-3.5 w-3.5" />
+                Last 24 Hours
+                <ChevronDown className="h-3.5 w-3.5" />
+              </button>
+              <button type="button" className="hidden items-center gap-2 text-[12px] font-medium text-muted lg:inline-flex">
+                <RefreshCcw className="h-3.5 w-3.5" />
+                Synced 38s ago
+              </button>
             </div>
 
-            <div className="hidden flex-1 justify-center xl:flex">
-              <label className="relative w-full max-w-[400px]">
+            <div className="hidden flex-1 justify-center md:flex">
+              <label className="relative w-full max-w-[440px]">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                 <input className="enterprise-input pl-9" placeholder="Search alerts, cases, entities..." />
               </label>
             </div>
 
             <div className="flex items-center gap-3">
-              <button type="button" className="enterprise-button enterprise-button-secondary w-9 px-0" aria-label="Notifications">
-                <Bell className="h-4 w-4" />
+              <button
+                type="button"
+                className="hidden h-9 items-center gap-2 rounded-[10px] border border-[rgba(99,102,241,0.4)] bg-[var(--brand-primary)] px-3 text-[12px] font-semibold text-white transition-all duration-150 ease-in hover:bg-[var(--brand-hover)] sm:inline-flex"
+              >
+                <FilePlus2 className="h-3.5 w-3.5" />
+                Create Case
               </button>
               <button
                 type="button"
-                aria-label="Environment switcher"
-                className="hidden h-10 items-center gap-2 rounded-[10px] border border-light bg-panel px-3 text-[12px] font-medium text-secondary transition-all duration-150 ease-in hover:bg-[#1E293B] md:inline-flex"
+                className="enterprise-button enterprise-button-secondary w-9 px-0"
+                aria-label="Notifications"
               >
-                <span className="text-primary">Production</span>
-                <span className="inline-block h-2 w-2 rounded-full bg-[var(--success)]" />
-                <span className="text-muted">Live</span>
-                <ChevronDown className="h-3.5 w-3.5 text-muted" />
+                <Bell className="h-4 w-4" />
               </button>
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-panel text-secondary">
                 <UserCircle2 className="h-5 w-5" />
@@ -196,6 +209,13 @@ export function AppShell({ title, breadcrumb, children, rightPanel }: ShellProps
 
         <div className="flex-1 overflow-auto">
           <div className="content-max py-6">
+            <section className="enterprise-page-header mb-6">
+              <div className="min-w-0">
+                <div className="text-[11px] font-medium uppercase tracking-[0.04em] text-muted">{breadcrumbText}</div>
+                <h1 className="mt-1 text-[28px] font-bold leading-[1.05] text-primary">{title}</h1>
+                {subtitle ? <p className="mt-2 text-[13px] text-secondary">{subtitle}</p> : null}
+              </div>
+            </section>
             {rightPanel ? (
               <div className="flex gap-6">
                 <div className="min-w-0 flex-1">{children}</div>

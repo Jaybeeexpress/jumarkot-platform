@@ -35,7 +35,7 @@ function TrendTooltip({ active, payload, label }: { active?: boolean; payload?: 
 
 function ChartSkeleton() {
   return (
-    <div className="flex h-[320px] items-end gap-2 rounded-[10px] border border-light bg-[#0F172A] p-4">
+    <div className="flex h-[320px] items-end gap-2 rounded-[10px] border border-light bg-[#0F172A] p-4 shadow-[0_0_0_1px_#1F2937]">
       {Array.from({ length: 14 }).map((_, index) => (
         <div
           key={index}
@@ -54,7 +54,7 @@ export function DashboardTrendChart({ data, isLoading = false }: DashboardTrendC
 
   if (data.length === 0) {
     return (
-      <div className="flex h-[320px] items-center justify-center rounded-[10px] border border-light bg-[#0F172A]">
+      <div className="flex h-[320px] items-center justify-center rounded-[10px] border border-light bg-[#0F172A] shadow-[0_0_0_1px_#1F2937]">
         <div className="text-center">
           <div className="text-[13px] font-medium text-secondary">No trend data available</div>
           <div className="mt-1 text-[11px] text-muted">New telemetry will appear after the next ingestion cycle.</div>
@@ -64,13 +64,13 @@ export function DashboardTrendChart({ data, isLoading = false }: DashboardTrendC
   }
 
   return (
-    <div className="h-[320px] rounded-[10px] border border-light bg-[#0F172A] p-3">
+    <div className="h-[320px] rounded-[10px] border border-light bg-[#0F172A] p-3 shadow-[0_0_0_1px_#1F2937]">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="pressureArea" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#6366F1" stopOpacity={0.28} />
-              <stop offset="100%" stopColor="#6366F1" stopOpacity={0.04} />
+              <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.28} />
+              <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.04} />
             </linearGradient>
           </defs>
           <CartesianGrid stroke="#1F2937" strokeDasharray="3 3" vertical={false} />
@@ -90,10 +90,10 @@ export function DashboardTrendChart({ data, isLoading = false }: DashboardTrendC
           <Area
             type="monotone"
             dataKey="pressure"
-            stroke="#6366F1"
+            stroke="#3B82F6"
             strokeWidth={2.25}
             fill="url(#pressureArea)"
-            activeDot={{ r: 4, fill: '#6366F1', stroke: '#111827', strokeWidth: 2 }}
+            activeDot={{ r: 4, fill: '#3B82F6', stroke: '#111827', strokeWidth: 2 }}
           />
         </AreaChart>
       </ResponsiveContainer>

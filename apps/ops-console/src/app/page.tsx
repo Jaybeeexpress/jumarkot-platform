@@ -1,9 +1,11 @@
 import { AppShell } from '@/components/layout/AppShell';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { DashboardTable } from '@/components/dashboard/DashboardTable';
 import { DashboardTrendChart } from '@/components/dashboard/DashboardTrendChart';
 import { MetricCard } from '@/components/dashboard/MetricCard';
 import { QueueSummaryCard } from '@/components/dashboard/QueueSummaryCard';
+import { ArrowUpRight, Clock3, Filter, Siren, Sparkles } from 'lucide-react';
 
 const kpis = [
   { label: 'Alerts Today', value: '184', delta: 'vs prior window +12.4%', accent: 'danger' as const },
@@ -15,6 +17,13 @@ const queue = [
   { label: 'Open Alerts', value: '47', status: 'OPEN' as const, updatedAt: 'Updated 2 mins ago' },
   { label: 'Cases In Review', value: '19', status: 'IN_PROGRESS' as const, updatedAt: 'Updated 4 mins ago' },
   { label: 'Resolved Today', value: '63', status: 'RESOLVED' as const, updatedAt: 'Updated 1 min ago' },
+];
+
+const caseActivity = [
+  { id: 'CASE-918', event: 'Ownership reassigned to L. Chen', age: '1 min ago', status: 'IN_PROGRESS' },
+  { id: 'CASE-913', event: 'Escalated for sanctions review', age: '7 mins ago', status: 'OPEN' },
+  { id: 'CASE-907', event: 'Supporting docs attached', age: '13 mins ago', status: 'IN_PROGRESS' },
+  { id: 'CASE-901', event: 'Closed after analyst approval', age: '24 mins ago', status: 'RESOLVED' },
 ];
 
 const recentAlerts = [
@@ -46,8 +55,31 @@ const isLoading = false;
 
 export default function DashboardPage() {
   return (
-    <AppShell title="Dashboard" breadcrumb={['Ops Console', 'Dashboard']}>
-      <div className="section-stack pt-10 lg:pt-14">
+    <AppShell
+      title="Dashboard"
+      subtitle="Centralized command view for alert pressure, queue throughput, and investigator activity."
+      breadcrumb={['Ops Console', 'Dashboard']}
+    >
+      <div className="section-stack gap-[24px] dashboard-container">
+        <section className="enterprise-banner-slim">
+          <div className="flex items-center gap-3">
+            <span className="mc-workspace-icon h-9 w-9">
+              <Sparkles className="h-4 w-4 text-[#67E8F9]" />
+            </span>
+            <div>
+              <div className="text-[13px] font-semibold text-primary">Dashboard Workspace</div>
+              <p className="text-[12px] text-secondary">Centralized view of alerts, decision trends, and analyst queue performance.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 text-[12px] text-muted">
+            <span className="enterprise-chip enterprise-chip-info">Active Window: 24h</span>
+            <button type="button" className="inline-flex items-center gap-1 font-medium text-secondary hover:text-primary">
+              Open full timeline
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </section>
+
         <div className="app-grid">
           {kpis.map((card) => (
             <MetricCard key={card.label} label={card.label} value={card.value} delta={card.delta} accent={card.accent} />
@@ -67,7 +99,16 @@ export default function DashboardPage() {
           </section>
 
           <section className="enterprise-card-dense row-span-4 min-h-[420px]">
-            <div className="enterprise-label">Queue Summary</div>
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <div className="enterprise-label">Queue Summary</div>
+                <h3 className="mt-1">Analyst Throughput</h3>
+              </div>
+              <button type="button" className="enterprise-button enterprise-button-secondary h-8 gap-2 px-3 text-[12px]">
+                <Filter className="h-3.5 w-3.5" />
+                Filters
+              </button>
+            </div>
             <div className="mt-4 space-y-3">
               {queue.map((item) => (
                 <QueueSummaryCard
@@ -82,16 +123,49 @@ export default function DashboardPage() {
           </section>
         </div>
 
-        <section className="enterprise-card-dense min-h-[320px]">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <div className="enterprise-label">Recent Alerts</div>
-              <h3 className="mt-1">Analyst Queue</h3>
+        <div className="app-grid">
+          <section className="enterprise-card-dense row-span-8 min-h-[360px]">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <div className="enterprise-label">Recent Alerts</div>
+                <h3 className="mt-1">Analyst Queue</h3>
+              </div>
+              <Link href="/alerts" className="enterprise-button enterprise-button-secondary">View All Alerts</Link>
             </div>
-            <Link href="/alerts" className="enterprise-button enterprise-button-secondary">View All Alerts</Link>
-          </div>
-          <DashboardTable rows={recentAlerts} isLoading={isLoading} />
-        </section>
+            <DashboardTable rows={recentAlerts} isLoading={isLoading} />
+          </section>
+
+          <section className="enterprise-card-dense row-span-4 min-h-[360px]">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <div className="enterprise-label">Case Activity</div>
+                <h3 className="mt-1">Latest Investigator Actions</h3>
+              </div>
+              <Link href={'/cases' as Route} className="enterprise-button enterprise-button-secondary h-8 px-3 text-[12px]">Open Cases</Link>
+            </div>
+
+            <div className="space-y-3">
+              {caseActivity.map((item) => (
+                <article key={item.id} className="rounded-[10px] border border-light bg-panel p-3 transition-all duration-150 ease-in hover:bg-[#243245]">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="inline-flex items-center gap-2 text-[12px] font-semibold text-primary">
+                        <Siren className="h-3.5 w-3.5 text-[#60A5FA]" />
+                        {item.id}
+                      </div>
+                      <p className="mt-1 text-[12px] text-secondary">{item.event}</p>
+                    </div>
+                    <span className="enterprise-chip enterprise-chip-info">{item.status}</span>
+                  </div>
+                  <div className="mt-2 inline-flex items-center gap-1 text-[11px] text-muted">
+                    <Clock3 className="h-3.5 w-3.5" />
+                    {item.age}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        </div>
       </div>
     </AppShell>
   );
