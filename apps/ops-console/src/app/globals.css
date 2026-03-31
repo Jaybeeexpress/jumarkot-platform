@@ -263,6 +263,34 @@
     background: linear-gradient(90deg, var(--brand-glow), rgba(99, 102, 241, 0));
     pointer-events: none;
   }
+
+  .enterprise-nav-reveal {
+    animation: enterprise-nav-reveal 280ms ease both;
+  }
+
+  .enterprise-nav-delay-0 { animation-delay: 0ms; }
+  .enterprise-nav-delay-1 { animation-delay: 35ms; }
+  .enterprise-nav-delay-2 { animation-delay: 70ms; }
+  .enterprise-nav-delay-3 { animation-delay: 105ms; }
+  .enterprise-nav-delay-4 { animation-delay: 140ms; }
+  .enterprise-nav-delay-5 { animation-delay: 175ms; }
+  .enterprise-nav-delay-6 { animation-delay: 210ms; }
+  .enterprise-nav-delay-7 { animation-delay: 245ms; }
+  .enterprise-nav-delay-8 { animation-delay: 280ms; }
+  .enterprise-nav-delay-9 { animation-delay: 315ms; }
+  .enterprise-nav-delay-10 { animation-delay: 350ms; }
+  .enterprise-nav-delay-11 { animation-delay: 385ms; }
+}
+
+@keyframes enterprise-nav-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @layer utilities {

@@ -31,6 +31,21 @@ type ShellProps = {
   rightPanel?: ReactNode;
 };
 
+const NAV_ANIMATION_DELAY_CLASSES = [
+  'enterprise-nav-delay-0',
+  'enterprise-nav-delay-1',
+  'enterprise-nav-delay-2',
+  'enterprise-nav-delay-3',
+  'enterprise-nav-delay-4',
+  'enterprise-nav-delay-5',
+  'enterprise-nav-delay-6',
+  'enterprise-nav-delay-7',
+  'enterprise-nav-delay-8',
+  'enterprise-nav-delay-9',
+  'enterprise-nav-delay-10',
+  'enterprise-nav-delay-11',
+];
+
 const sections: Array<{
   label: 'MAIN' | 'ANALYSIS' | 'COMPLIANCE' | 'SYSTEM';
   items: Array<{ href: Route; label: string; icon: typeof LayoutDashboard }>;
@@ -67,8 +82,21 @@ const sections: Array<{
 export function AppShell({ title, breadcrumb, children, rightPanel }: ShellProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [isSidebarAnimating, setIsSidebarAnimating] = useState(false);
 
   const breadcrumbText = useMemo(() => breadcrumb.join(' / '), [breadcrumb]);
+  const totalNavItems = useMemo(() => sections.reduce((count, section) => count + section.items.length, 0), []);
+
+  const handleSidebarToggle = () => {
+    setCollapsed((previous) => {
+      const nextCollapsed = !previous;
+      if (previous && !nextCollapsed) {
+        setIsSidebarAnimating(true);
+        window.setTimeout(() => setIsSidebarAnimating(false), 520);
+      }
+      return nextCollapsed;
+    });
+  };
 
   return (
     <div className="enterprise-shell">
@@ -80,7 +108,7 @@ export function AppShell({ title, breadcrumb, children, rightPanel }: ShellProps
           </div>
           <button
             type="button"
-            onClick={() => setCollapsed((value) => !value)}
+            onClick={handleSidebarToggle}
             className="enterprise-button enterprise-button-secondary w-9 px-0"
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
@@ -94,9 +122,15 @@ export function AppShell({ title, breadcrumb, children, rightPanel }: ShellProps
               <div key={section.label} className="space-y-2">
                 {!collapsed && <div className="enterprise-label text-[11px] text-muted">{section.label}</div>}
                 <div className="space-y-2">
-                  {section.items.map((item) => {
+                  {section.items.map((item, itemIndex) => {
                     const Icon = item.icon;
                     const active = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));
+                    const priorItemsCount = sections
+                      .slice(0, sections.findIndex((candidate) => candidate.label === section.label))
+                      .reduce((count, candidate) => count + candidate.items.length, 0);
+                    const sequenceIndex = priorItemsCount + itemIndex;
+                    const clampedIndex = Math.min(sequenceIndex, NAV_ANIMATION_DELAY_CLASSES.length - 1);
+                    const delayClass = NAV_ANIMATION_DELAY_CLASSES[clampedIndex];
 
                     return (
                       <Link
@@ -107,6 +141,8 @@ export function AppShell({ title, breadcrumb, children, rightPanel }: ShellProps
                           active
                             ? 'border-l-[var(--brand-primary)] bg-panel text-primary font-semibold shadow-[0_0_0_1px_#1F2937,0_8px_24px_rgba(0,0,0,0.18)]'
                             : 'border-l-transparent text-secondary hover:bg-[#1E293B] hover:text-primary',
+                          !collapsed && isSidebarAnimating && sequenceIndex < totalNavItems && 'enterprise-nav-reveal',
+                          !collapsed && isSidebarAnimating && delayClass,
                           collapsed && 'justify-center px-0',
                         )}
                       >
