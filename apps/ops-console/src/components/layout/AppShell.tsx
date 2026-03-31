@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
 import {
   Bell,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   FileText,
@@ -30,16 +31,37 @@ type ShellProps = {
   rightPanel?: ReactNode;
 };
 
-const items: Array<{ href: Route; label: string; icon: typeof LayoutDashboard }> = [
-  { href: '/' as Route, label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/alerts' as Route, label: 'Alerts', icon: ShieldAlert },
-  { href: '/cases' as Route, label: 'Cases', icon: Scale },
-  { href: '/decisions' as Route, label: 'Decisions', icon: ShieldCheck },
-  { href: '/entities' as Route, label: 'Entities', icon: Users },
-  { href: '/rules' as Route, label: 'Rules', icon: GanttChartSquare },
-  { href: '/screening' as Route, label: 'Screening', icon: Waypoints },
-  { href: '/reports' as Route, label: 'Reports', icon: FileText },
-  { href: '/admin' as Route, label: 'Admin', icon: Settings },
+const sections: Array<{
+  label: 'MAIN' | 'ANALYSIS' | 'COMPLIANCE' | 'SYSTEM';
+  items: Array<{ href: Route; label: string; icon: typeof LayoutDashboard }>;
+}> = [
+  {
+    label: 'MAIN',
+    items: [
+      { href: '/' as Route, label: 'Dashboard', icon: LayoutDashboard },
+      { href: '/alerts' as Route, label: 'Alerts', icon: ShieldAlert },
+      { href: '/cases' as Route, label: 'Cases', icon: Scale },
+    ],
+  },
+  {
+    label: 'ANALYSIS',
+    items: [
+      { href: '/decisions' as Route, label: 'Decisions', icon: ShieldCheck },
+      { href: '/entities' as Route, label: 'Entities', icon: Users },
+      { href: '/rules' as Route, label: 'Rules', icon: GanttChartSquare },
+    ],
+  },
+  {
+    label: 'COMPLIANCE',
+    items: [
+      { href: '/screening' as Route, label: 'Screening', icon: Waypoints },
+      { href: '/reports' as Route, label: 'Reports', icon: FileText },
+    ],
+  },
+  {
+    label: 'SYSTEM',
+    items: [{ href: '/admin' as Route, label: 'Admin', icon: Settings }],
+  },
 ];
 
 export function AppShell({ title, breadcrumb, children, rightPanel }: ShellProps) {
@@ -50,12 +72,7 @@ export function AppShell({ title, breadcrumb, children, rightPanel }: ShellProps
 
   return (
     <div className="enterprise-shell">
-      <aside
-        className={clsx(
-          'enterprise-sidebar',
-          collapsed ? 'enterprise-sidebar-collapsed' : 'enterprise-sidebar-expanded',
-        )}
-      >
+      <aside className={clsx('enterprise-sidebar', collapsed ? 'enterprise-sidebar-collapsed' : 'enterprise-sidebar-expanded')}>
         <div className="flex h-16 items-center justify-between border-b border-light px-4">
           <div className={clsx('overflow-hidden', collapsed && 'hidden')}>
             <div className="text-[15px] font-semibold text-primary">Jumarkot</div>
@@ -71,29 +88,36 @@ export function AppShell({ title, breadcrumb, children, rightPanel }: ShellProps
           </button>
         </div>
 
-        <nav className="flex-1 px-3 py-4">
-          <div className="space-y-1">
-            {items.map((item) => {
-              const Icon = item.icon;
-              const active = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));
+        <nav className="flex-1 overflow-auto px-4 py-4">
+          <div className="space-y-4">
+            {sections.map((section) => (
+              <div key={section.label} className="space-y-2">
+                {!collapsed && <div className="enterprise-label text-[11px] text-muted">{section.label}</div>}
+                <div className="space-y-2">
+                  {section.items.map((item) => {
+                    const Icon = item.icon;
+                    const active = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));
 
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={clsx(
-                    'flex h-11 items-center gap-3 rounded-r-md border-l-3 px-3 text-[14px] font-medium transition-colors',
-                    active
-                      ? 'border-l-[var(--brand-primary)] bg-panel text-primary'
-                      : 'border-l-transparent text-secondary hover:bg-panel hover:text-primary',
-                    collapsed && 'justify-center px-0',
-                  )}
-                >
-                  <Icon className="h-5 w-5 shrink-0" />
-                  {!collapsed && <span>{item.label}</span>}
-                </Link>
-              );
-            })}
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={clsx(
+                          'flex h-10 items-center gap-3 rounded-[8px] border-l-[3px] px-3 text-[14px] font-medium transition-all duration-150 ease-in',
+                          active
+                            ? 'border-l-[var(--brand-primary)] bg-panel text-primary font-semibold shadow-[0_0_0_1px_#1F2937,0_8px_24px_rgba(0,0,0,0.18)]'
+                            : 'border-l-transparent text-secondary hover:bg-[#1E293B] hover:text-primary',
+                          collapsed && 'justify-center px-0',
+                        )}
+                      >
+                        <Icon className={clsx('h-5 w-5 shrink-0', active ? 'text-primary' : 'text-muted')} />
+                        {!collapsed && <span>{item.label}</span>}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         </nav>
       </aside>
@@ -102,8 +126,8 @@ export function AppShell({ title, breadcrumb, children, rightPanel }: ShellProps
         <header className="enterprise-topbar flex items-center">
           <div className="content-max flex h-full items-center justify-between gap-4">
             <div className="min-w-0">
-              <div className="text-[12px] text-muted">{breadcrumbText}</div>
-              <h2>{title}</h2>
+              <div className="text-[11px] font-medium uppercase tracking-[0.04em] text-muted">{breadcrumbText}</div>
+              <h1 className="text-[28px] font-bold leading-[1.05] text-primary">{title}</h1>
             </div>
 
             <div className="hidden flex-1 justify-center xl:flex">
@@ -117,10 +141,16 @@ export function AppShell({ title, breadcrumb, children, rightPanel }: ShellProps
               <button type="button" className="enterprise-button enterprise-button-secondary w-9 px-0" aria-label="Notifications">
                 <Bell className="h-4 w-4" />
               </button>
-              <select aria-label="Environment switcher" title="Environment switcher" className="enterprise-input hidden w-[140px] md:block">
-                <option>Production</option>
-                <option>Sandbox</option>
-              </select>
+              <button
+                type="button"
+                aria-label="Environment switcher"
+                className="hidden h-10 items-center gap-2 rounded-[10px] border border-light bg-panel px-3 text-[12px] font-medium text-secondary transition-all duration-150 ease-in hover:bg-[#1E293B] md:inline-flex"
+              >
+                <span className="text-primary">Production</span>
+                <span className="inline-block h-2 w-2 rounded-full bg-[var(--success)]" />
+                <span className="text-muted">Live</span>
+                <ChevronDown className="h-3.5 w-3.5 text-muted" />
+              </button>
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-panel text-secondary">
                 <UserCircle2 className="h-5 w-5" />
               </div>

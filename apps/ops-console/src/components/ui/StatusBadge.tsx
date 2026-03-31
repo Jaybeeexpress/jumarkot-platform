@@ -19,7 +19,7 @@ const variants: Record<string, string> = {
   // Environments
   PRODUCTION:  'bg-sky-500/12 text-sky-400 border border-sky-500/30',
   SANDBOX:     'bg-indigo-500/12 text-indigo-400 border border-indigo-500/30',
-  OPEN:        'bg-rose-500/12 text-rose-400 border border-rose-500/30',
+  OPEN:        'bg-sky-500/12 text-sky-400 border border-sky-500/30',
   IN_PROGRESS: 'bg-amber-500/12 text-amber-400 border border-amber-500/30',
   RESOLVED:    'bg-emerald-500/12 text-emerald-400 border border-emerald-500/30',
   P1:          'bg-rose-500/12 text-rose-400 border border-rose-500/30',
