@@ -1,7 +1,8 @@
 import type { Route } from 'next';
 import Link from 'next/link';
-import { AppShell } from '@/components/layout/AppShell';
+import { EnterpriseShell } from '@/components/layout/EnterpriseShell';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { OPS_CONSOLE_NAV_SECTIONS } from '@/lib/nav-config';
 
 const alerts = [
   ['ALT-90314', '2026-03-31 09:11', 'user_982', 'LOGIN_ATTEMPT', '91', 'HIGH', 'OPEN', 'S. Cole'],
@@ -13,7 +14,13 @@ const alerts = [
 
 export default function AlertsPage() {
   return (
-    <AppShell title="Alerts" breadcrumb={['Ops Console', 'Alerts']}>
+    <EnterpriseShell
+      title="Alerts"
+      breadcrumb={['Ops Console', 'Alerts']}
+      navSections={OPS_CONSOLE_NAV_SECTIONS}
+      searchPlaceholder="Search alert ID, entity, assignee"
+      environmentLabel="Production"
+    >
       <div className="section-stack">
         <section className="enterprise-card-dense">
           <div className="flex h-14 items-center gap-4">
@@ -55,6 +62,6 @@ export default function AlertsPage() {
           </table>
         </section>
       </div>
-    </AppShell>
+    </EnterpriseShell>
   );
 }

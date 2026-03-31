@@ -1,5 +1,6 @@
-import { AppShell } from '@/components/layout/AppShell';
+import { EnterpriseShell } from '@/components/layout/EnterpriseShell';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { OPS_CONSOLE_NAV_SECTIONS } from '@/lib/nav-config';
 
 export default async function AlertDetailPage({ params }: { params: Promise<{ alertId: string }> }) {
   const { alertId } = await params;
@@ -34,7 +35,14 @@ export default async function AlertDetailPage({ params }: { params: Promise<{ al
   );
 
   return (
-    <AppShell title="Alert Detail" breadcrumb={['Ops Console', 'Alerts', alertId]} rightPanel={rightPanel}>
+    <EnterpriseShell
+      title="Alert Detail"
+      breadcrumb={['Ops Console', 'Alerts', alertId]}
+      navSections={OPS_CONSOLE_NAV_SECTIONS}
+      searchPlaceholder="Search alerts..."
+      environmentLabel="Production"
+      rightPanel={rightPanel}
+    >
       <div className="section-stack">
         <section className="enterprise-card-dense flex h-[120px] items-center justify-between">
           <div>
@@ -79,6 +87,6 @@ export default async function AlertDetailPage({ params }: { params: Promise<{ al
           </section>
         </div>
       </div>
-    </AppShell>
+    </EnterpriseShell>
   );
 }
