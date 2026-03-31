@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
+import Link from 'next/link';
 import { DashboardTable } from '@/components/dashboard/DashboardTable';
 import { DashboardTrendChart } from '@/components/dashboard/DashboardTrendChart';
 import { MetricCard } from '@/components/dashboard/MetricCard';
@@ -47,7 +47,7 @@ const isLoading = false;
 export default function DashboardPage() {
   return (
     <AppShell title="Dashboard" breadcrumb={['Ops Console', 'Dashboard']}>
-      <div className="section-stack pt-8 lg:pt-10">
+      <div className="section-stack pt-10 lg:pt-14">
         <div className="app-grid">
           {kpis.map((card) => (
             <MetricCard key={card.label} label={card.label} value={card.value} delta={card.delta} accent={card.accent} />
