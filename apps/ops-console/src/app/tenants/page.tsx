@@ -1,215 +1,86 @@
-'use client';
-
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { Nav } from '@/components/layout/Nav';
+import { AppShell } from '@/components/layout/AppShell';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { ErrorAlert } from '@/components/ui/ErrorAlert';
-import { SuccessAlert } from '@/components/ui/SuccessAlert';
-import { toUserFacingApiError } from '@/lib/api/errors';
-import { isSuccessfulResponse } from '@/lib/api/response';
-import { provisionTenant, getTenant, getTenantEnvironments } from '@/lib/api/tenants';
-import type { Tenant } from '@/types';
-
-const schema = z.object({
-  slug:         z.string().regex(/^[a-z0-9-]{3,63}$/, '3-63 lowercase alphanum or hyphens'),
-  name:         z.string().min(1, 'Required'),
-  plan:         z.string().min(1, 'Required'),
-  contactEmail: z.string().email('Valid email required'),
-});
-type FormData = z.infer<typeof schema>;
 
 export default function TenantsPage() {
-  const [lookupInput, setLookupInput]         = useState('');
-  const [activeLookupId, setActiveLookupId]   = useState('');
-  const [provisioned, setProvisioned]         = useState<Tenant | null>(null);
-  const canLookupTenant = lookupInput.trim().length > 0;
-
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
-    resolver: zodResolver(schema),
-    defaultValues: { plan: 'starter' },
-  });
-
-  const provision = useMutation({
-    mutationFn: provisionTenant,
-    onSuccess: (res) => {
-      if (isSuccessfulResponse(res)) {
-        setProvisioned(res.data);
-        reset();
-      }
-    },
-  });
-
-  const { data: tenantData, isLoading: tenantLoading, error: tenantError } = useQuery({
-    queryKey: ['tenant', activeLookupId],
-    queryFn:  () => getTenant(activeLookupId),
-    enabled:  !!activeLookupId,
-  });
-
-  const { data: envsData, error: envsError } = useQuery({
-    queryKey: ['tenant-environments', activeLookupId],
-    queryFn:  () => getTenantEnvironments(activeLookupId),
-    enabled:  !!activeLookupId,
-  });
-
-  const tenant = isSuccessfulResponse(tenantData) ? tenantData.data : null;
-  const environments = isSuccessfulResponse(envsData) ? envsData.data : [];
-  const provisionErrorMessage = provision.error
-    ? toUserFacingApiError(provision.error, 'Failed to provision tenant.')
-    : null;
-  const tenantErrorMessage = tenantError
-    ? toUserFacingApiError(tenantError, 'Failed to load tenant.')
-    : null;
-  const envsErrorMessage = envsError
-    ? toUserFacingApiError(envsError, 'Failed to load tenant environments.')
-    : null;
-
-  const inputCls =
-    'mt-1 w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500';
+  const tenants = [
+    ['TEN-001', 'Acme Corp', 'Enterprise', 'acme-corp', '2026-02-15', 'ACTIVE'],
+    ['TEN-002', 'TechStart Inc', 'Growth', 'techstart-inc', '2026-03-10', 'ACTIVE'],
+    ['TEN-003', 'Global Solutions', 'Starter', 'global-solutions', '2026-03-25', 'ACTIVE'],
+    ['TEN-004', 'Alpha Labs', 'Enterprise', 'alpha-labs', '2026-03-28', 'ACTIVE'],
+    ['TEN-005', 'Beta Partners', 'Growth', 'beta-partners', '2026-03-29', 'DEGRADED'],
+  ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
-      <Nav />
-      <main className="flex-1 p-8">
-        <h1 className="mb-6 text-2xl font-semibold text-slate-900">Tenants</h1>
-
-        <div className="grid gap-8 lg:grid-cols-2">
-          {/* ── Provision form ── */}
-          <div className="rounded-lg border bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-base font-medium text-slate-900">Provision New Tenant</h2>
-            <form onSubmit={handleSubmit((d) => provision.mutate(d))} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700">Slug</label>
-                <input {...register('slug')} placeholder="acme-corp" className={inputCls} />
-                {errors.slug && <p className="mt-1 text-xs text-red-600">{errors.slug.message}</p>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700">Name</label>
-                <input {...register('name')} placeholder="Acme Corp" className={inputCls} />
-                {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700">Plan</label>
-                <select {...register('plan')} className={inputCls}>
-                  <option value="starter">Starter</option>
-                  <option value="growth">Growth</option>
-                  <option value="enterprise">Enterprise</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700">Contact Email</label>
-                <input {...register('contactEmail')} type="email" placeholder="admin@acme.com" className={inputCls} />
-                {errors.contactEmail && <p className="mt-1 text-xs text-red-600">{errors.contactEmail.message}</p>}
-              </div>
-
-              {provisionErrorMessage && <ErrorAlert message={provisionErrorMessage} />}
-
-              <button
-                type="submit"
-                disabled={provision.isPending}
-                className="w-full rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
-              >
-                {provision.isPending ? 'Provisioning…' : 'Provision Tenant'}
-              </button>
-            </form>
-
-            {provisioned && (
-              <div className="mt-4 rounded-lg bg-green-50 p-4">
-                <p className="text-sm font-medium text-green-800">Tenant provisioned</p>
-                <p className="mt-1 font-mono text-xs text-green-700">ID: {provisioned.id}</p>
-                <p className="font-mono text-xs text-green-700">Slug: {provisioned.slug}</p>
-              </div>
-            )}
-          </div>
-
-          {/* ── Lookup ── */}
-          <div className="space-y-6">
-            <div className="rounded-lg border bg-white p-6 shadow-sm">
-              <h2 className="mb-4 text-base font-medium text-slate-900">Look Up Tenant</h2>
-              <div className="flex gap-3">
-                <input
-                  value={lookupInput}
-                  onChange={(e) => setLookupInput(e.target.value)}
-                  placeholder="Tenant UUID"
-                  className="flex-1 rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
-                />
-                <button
-                  onClick={() => {
-                    setActiveLookupId(lookupInput.trim());
-                  }}
-                  disabled={!canLookupTenant}
-                  className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Look Up
-                </button>
-              </div>
-
-              {!activeLookupId && (
-                <p className="mt-3 text-sm text-slate-500">
-                  Enter a tenant UUID to load tenant details and environments.
-                </p>
-              )}
-
-              {tenantErrorMessage && <ErrorAlert message={tenantErrorMessage} />}
-              {envsErrorMessage && <div className="mt-3"><ErrorAlert message={envsErrorMessage} /></div>}
-              {tenantLoading && <p className="mt-3 text-sm text-slate-500">Loading…</p>}
-              {!tenantLoading && tenant && !tenantErrorMessage && (
-                <div className="mt-3">
-                  <SuccessAlert message={`Tenant loaded successfully: ${tenant.slug}`} />
-                </div>
-              )}
-
-              {tenant && (
-                <dl className="mt-4 space-y-2 text-sm">
-                  {([
-                    ['Name',  tenant.name],
-                    ['Slug',  tenant.slug],
-                    ['Plan',  tenant.plan],
-                    ['Email', tenant.contactEmail],
-                  ] as [string, string][]).map(([label, value]) => (
-                    <div key={label} className="flex justify-between">
-                      <dt className="text-slate-500">{label}</dt>
-                      <dd className="text-slate-900">{value}</dd>
-                    </div>
-                  ))}
-                  <div className="flex justify-between">
-                    <dt className="text-slate-500">Status</dt>
-                    <dd><StatusBadge value={tenant.status} /></dd>
-                  </div>
-                </dl>
-              )}
+    <AppShell title="Tenants" breadcrumb={['Ops Console', 'Tenants']}>
+      <div className="section-stack">
+        <section className="enterprise-card-dense">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <div className="enterprise-label">Tenant Management</div>
+              <div className="mt-1 text-[13px] text-secondary">12 total tenants, 11 active</div>
             </div>
-
-            {environments && environments.length > 0 && (
-              <div className="rounded-lg border bg-white p-6 shadow-sm">
-                <h2 className="mb-3 text-sm font-medium text-slate-900">Environments</h2>
-                <div className="space-y-2">
-                  {environments.map((env) => (
-                    <div
-                      key={env.id}
-                      className="flex items-center justify-between rounded bg-slate-50 px-3 py-2"
-                    >
-                      <div>
-                        <p className="text-sm font-medium text-slate-900">{env.name}</p>
-                        <p className="font-mono text-xs text-slate-500">{env.id}</p>
-                      </div>
-                      <StatusBadge value={env.type} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            {!tenantLoading && tenant && environments.length === 0 && !envsErrorMessage && (
-              <div className="rounded-lg border bg-white p-6 text-sm text-slate-500 shadow-sm">
-                No environments were returned for this tenant.
-              </div>
-            )}
+            <button className="enterprise-button enterprise-button-primary">
+              Provision Tenant
+            </button>
           </div>
-        </div>
-      </main>
-    </div>
+          <input
+            type="text"
+            placeholder="Search by name or identifier..."
+            className="enterprise-input w-full"
+          />
+        </section>
+
+        <section className="enterprise-card-dense overflow-hidden">
+          <table className="enterprise-table w-full">
+            <thead>
+              <tr className="border-b border-light">
+                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.04em] text-secondary uppercase">Tenant ID</th>
+                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.04em] text-secondary uppercase">Name</th>
+                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.04em] text-secondary uppercase">Plan</th>
+                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.04em] text-secondary uppercase">Slug</th>
+                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.04em] text-secondary uppercase">Provisioned</th>
+                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.04em] text-secondary uppercase">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tenants.map((row, idx) => (
+                <tr key={idx} className="border-b border-light last:border-b-0 hover:bg-card/50 transition-colors">
+                  <td className="px-4 py-3 text-[13px] text-primary font-medium">{row[0]}</td>
+                  <td className="px-4 py-3 text-[13px] text-primary">{row[1]}</td>
+                  <td className="px-4 py-3 text-[13px] text-secondary">
+                    <span className="inline-block px-2.5 py-1 rounded-md bg-indigo-500/12 text-indigo-400 border border-indigo-500/30 text-[11px] font-semibold">
+                      {row[2]}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-[13px] text-secondary">{row[3]}</td>
+                  <td className="px-4 py-3 text-[13px] text-secondary">{row[4]}</td>
+                  <td className="px-4 py-3 text-[13px]">
+                    <StatusBadge value={row[5]} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+
+        <section className="enterprise-card-dense">
+          <div className="enterprise-label mb-4">Tenant Details</div>
+          <div className="space-y-2 text-[13px] text-secondary">
+            <div className="enterprise-panel flex items-center justify-between p-4">
+              <span>Total Tenants</span>
+              <span className="text-primary font-medium">12</span>
+            </div>
+            <div className="enterprise-panel flex items-center justify-between p-4">
+              <span>Active Status</span>
+              <span className="text-primary font-medium">11 / 12</span>
+            </div>
+            <div className="enterprise-panel flex items-center justify-between p-4">
+              <span>Enterprise Plans</span>
+              <span className="text-primary font-medium">4</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </AppShell>
   );
 }
