@@ -1,9 +1,11 @@
 import Link from 'next/link';
-import { AppShell } from '@/components/layout/AppShell';
+import type { Route } from 'next';
+import { EnterpriseShell } from '@/components/layout/EnterpriseShell';
 import { DashboardTable } from '@/components/dashboard/DashboardTable';
 import { DashboardTrendChart } from '@/components/dashboard/DashboardTrendChart';
 import { MetricCard } from '@/components/dashboard/MetricCard';
 import { QueueSummaryCard } from '@/components/dashboard/QueueSummaryCard';
+import { OPS_CONSOLE_NAV_SECTIONS } from '@/lib/nav-config';
 
 const kpis = [
   { label: 'Alerts Today', value: '184', delta: 'vs prior window +12.4%', accent: 'danger' as const },
@@ -46,7 +48,13 @@ const isLoading = false;
 
 export default function DashboardPage() {
   return (
-    <AppShell title="Dashboard" breadcrumb={['Ops Console', 'Dashboard']}>
+    <EnterpriseShell
+      title="Dashboard"
+      breadcrumb={['Ops Console', 'Dashboard']}
+      navSections={OPS_CONSOLE_NAV_SECTIONS}
+      searchPlaceholder="Search alerts and cases..."
+      environmentLabel="Production"
+    >
       <div className="section-stack">
         <div className="app-grid">
           {kpis.map((card) => (
@@ -61,7 +69,7 @@ export default function DashboardPage() {
                 <div className="enterprise-label">Decision Trend</div>
                 <h3 className="mt-1">Daily Review Pressure</h3>
               </div>
-              <Link href="/decisions" className="enterprise-button enterprise-button-secondary">Open Decisions</Link>
+              <Link href={'/decisions' as Route} className="enterprise-button enterprise-button-secondary">Open Decisions</Link>
             </div>
             <DashboardTrendChart data={trendData} isLoading={isLoading} />
           </section>
@@ -88,11 +96,11 @@ export default function DashboardPage() {
               <div className="enterprise-label">Recent Alerts</div>
               <h3 className="mt-1">Analyst Queue</h3>
             </div>
-            <Link href="/alerts" className="enterprise-button enterprise-button-secondary">View All Alerts</Link>
+            <Link href={'/alerts' as Route} className="enterprise-button enterprise-button-secondary">View All Alerts</Link>
           </div>
           <DashboardTable rows={recentAlerts} isLoading={isLoading} />
         </section>
       </div>
-    </AppShell>
+    </EnterpriseShell>
   );
 }

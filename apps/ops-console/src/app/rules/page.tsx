@@ -1,11 +1,18 @@
 import { EnterpriseShell } from '@/components/layout/EnterpriseShell';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { OPS_CONSOLE_NAV_SECTIONS } from '@/lib/nav-config';
+
 const rules = [
   ['Credential Mismatch Escalation', 'ACCOUNT', '120', 'REVIEW', '+18', 'ACTIVE'],
   ['Impossible Travel Block', 'LOGIN', '140', 'BLOCK', '+30', 'ACTIVE'],
   ['Document Freshness Check', 'KYC', '90', 'REVIEW', '+12', 'DRAFT'],
   ['Velocity Suppression Rule', 'PAYMENT', '110', 'DECLINE', '+24', 'INACTIVE'],
+];
+
+const ruleStats = [
+  { label: 'Total Rules', value: '42', trend: '+2 this week' },
+  { label: 'Active Rules', value: '38', trend: '90% coverage' },
+  { label: 'Pending Review', value: '4', trend: '3 drafts' },
 ];
 
 export default function RulesPage() {
@@ -18,6 +25,20 @@ export default function RulesPage() {
       environmentLabel="Production"
     >
       <div className="section-stack">
+        {/* Stats Cards */}
+        <div className="app-grid">
+          {ruleStats.map((stat) => (
+            <section key={stat.label} className="enterprise-card-dense">
+              <div className="enterprise-label">{stat.label}</div>
+              <div className="mt-4">
+                <div className="text-[32px] font-semibold text-primary">{stat.value}</div>
+                <div className="mt-2 text-[13px] text-secondary">{stat.trend}</div>
+              </div>
+            </section>
+          ))}
+        </div>
+
+        {/* Filters and Search */}
         <section className="enterprise-card-dense">
           <div className="app-grid">
             <div className="row-span-6">
@@ -34,7 +55,10 @@ export default function RulesPage() {
             </div>
           </div>
         </section>
+
+        {/* Rules Table */}
         <section className="enterprise-card-dense">
+          <div className="enterprise-label mb-4">Decision Rules</div>
           <table className="enterprise-table">
             <thead>
               <tr>
